@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'playertile.dart';
+import 'players_profile.dart';
 
 import 'dart:math' as math;
 
@@ -158,19 +159,6 @@ class _MyAppState extends State<MyApp> {
                   );
                 })),
       ),
-    );
-  }
-}
-
-class DetailsScreen extends StatelessWidget {
-  final Position setPosition;
-
-  DetailsScreen({Key key, @required this.setPosition}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(child: Text(setPosition.name)),
     );
   }
 }

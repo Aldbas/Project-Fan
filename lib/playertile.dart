@@ -76,8 +76,8 @@ class _GridTileCardState extends State<GridTileCard> {
               CircleAvatar(
                 radius: 32.0,
                 backgroundColor: Colors.transparent,
-                child: Image.network(
-                    'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254'),
+//                child: Image.network(
+//                    'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254'),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
