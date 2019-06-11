@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'player_news_and_updates.dart';
 import 'player_stats.dart';
 import 'playertile.dart';
+import 'player_news_and_updates.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Position setPosition;
@@ -43,11 +44,11 @@ class DetailsScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),
-//                    child: Image.network(
-//                      'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254',
-//                      scale: 2,
-//                    ),
-                  )
+                    child: Image.network(
+                      'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254',
+                      scale: 2,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -71,8 +72,7 @@ class DetailsScreen extends StatelessWidget {
                 Tab(text: 'Stats'),
               ],
             ),
-            SizedBox(
-              height: 300,
+            Expanded(
               child: TabBarView(
                 children: [
                   PlayerUpdates(),

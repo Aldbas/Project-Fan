@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
   ];
   List<Categories> categories;
   List<Categories> selectedCategories;
-  bool sort;
+//  bool sort;
 
   @override
   void initState() {
