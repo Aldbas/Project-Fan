@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'planets.dart';
 
 class Position {
   final String name;
@@ -146,10 +145,9 @@ class _GridTileCardState extends State<GridTileCard> {
 }
 
 class GridTilePosition extends StatelessWidget {
-  final Planet planet;
   final Position position;
 
-  GridTilePosition({this.position, this.planet});
+  GridTilePosition({this.position});
   @override
   Widget build(BuildContext context) {
     return Padding(
