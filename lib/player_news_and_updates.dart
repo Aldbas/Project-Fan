@@ -64,25 +64,29 @@ class _PlayerUpdatesState extends State<PlayerUpdates> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.blue[900],
         body: FutureBuilder(
-      future: fetchData(
-          'http://premium.rotoworld.com/rss/feed.aspx?sport=nba&ftype=news&count=12&format=rss'),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-        dom.Document document = parser.parse(snapshot.data);
-        var test = document.getElementsByTagName('description');
-        List<String> test1 = document
-            .getElementsByTagName('title')
-            .map((title) => title.text)
-            .skip(1)
-            .toList();
-        List<String> test2 = document
-            .getElementsByTagName('description')
-            .map((e) => e.text)
-            .skip(1)
-            .toList();
+          future: fetchData(
+              'http://premium.rotoworld.com/rss/feed.aspx?sport=nba&ftype=news&count=12&format=rss'),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return CircularProgressIndicator();
+            }
+            dom.Document document = parser.parse(snapshot.data);
+            var test = document.getElementsByTagName('description');
+            var link = document.getElementsByTagName('link');
+//        var date = document.getElementsByTagName('a10:updated');
+//        List<String> testDate = date.map((date) => date.text).toList();
+            List<String> test1 = document
+                .getElementsByTagName('title')
+                .map((title) => title.text)
+                .skip(1)
+                .toList();
+            List<String> test2 = document
+                .getElementsByTagName('description')
+                .map((e) => e.text)
+                .skip(1)
+                .toList();
 
 //        var testXml2Json = jsonDecode(toJson);
 //        List<AtomItem> titles = testd.items;
@@ -93,26 +97,42 @@ class _PlayerUpdatesState extends State<PlayerUpdates> {
 //        List<String> bodyText = titles.map((body) => body.content).toList();
 //        List<String> date = titles.map((date) => date.published).toList();
 
-        return ListView.builder(
-            itemCount: test2.length,
-            itemBuilder: (context, index) {
-              return Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue[900])),
-                  height: 150.0,
+            return ListView.builder(
+                itemCount: test2.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border:
+                              Border.all(width: 4.0, color: Colors.blue[900])),
+                      height: 150.0,
 //                  width: 50,
-                  child: ListTile(
-                    title: Text(
-                      test1[index],
-                      textScaleFactor: .90,
-                    ),
-                    subtitle: Text(
-                      test2[index],
-                      softWrap: true,
-                    ),
-                  ));
-            });
-      },
-    )); //TODO:Return
+                      child: ListTile(
+                        title: Text(
+                          test1[index],
+                          textScaleFactor: .90,
+                        ),
+                        subtitle: Text(
+                          test2[index],
+                          softWrap: true,
+                        ),
+                      ));
+                });
+          },
+        )); //TODO:Return
+  }
+}
+
+class RotoPlayerId {
+  final int id;
+  final String name;
+
+  RotoPlayerId({this.id, this.name});
+
+  factory RotoPlayerId.fromJson(Map<String, dynamic> json) {
+    return RotoPlayerId(
+      id: json['id'] as int,
+      name: json['name'] as String,
+    );
   }
 }

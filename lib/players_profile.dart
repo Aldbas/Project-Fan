@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_fan/player_gamelog.dart';
 import 'player_news_and_updates.dart';
 import 'player_stats.dart';
 import 'playertile.dart';
@@ -76,7 +77,7 @@ class DetailsScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   PlayerUpdates(),
-                  GameLogData(),
+                  PlayerGameLog(),
                   PlayerStats(),
                 ],
               ),
