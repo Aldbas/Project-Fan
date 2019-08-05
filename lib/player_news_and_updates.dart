@@ -11,7 +11,6 @@ import 'package:webfeed/webfeed.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:xml2json/xml2json.dart';
 
-import 'xml test.dart';
 
 List<String> items = [];
 var client = http.Client();

@@ -88,15 +88,14 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     background: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        IconButton(
-                            icon: Icon(Icons.home),
-                            onPressed: () {
-                              Navigator.of(context).pushNamed('HomePage');
-                            }),
+                       Text('Sat, Mar 30',style: TextStyle(color: Colors.white),),
                         Text(
-                          'League NAME',
-                        ),
-                        Icon(Icons.message)
+                          'BEST LEAGUE',
+                          style: TextStyle(color: Colors.white),
+                        ),IconButton(
+                          icon: Icon(Icons.settings),
+                          color: Colors.white,
+                          onPressed: () => print('Team Settings'))
                       ],
                     ),
                     centerTitle: true,

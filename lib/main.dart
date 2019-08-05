@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:project_fan/home_page.dart';
 
+import 'Standings.dart';
 import 'playertile.dart';
 import 'players_profile.dart';
 import 'team_roster_page.dart';

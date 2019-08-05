@@ -156,7 +156,7 @@ class GridTilePosition extends StatelessWidget {
       child: Container(
         color:
             Colors.white, //TODO:ADD Conditional statement 'If already playing'
-        height: 90,
+        height: 70,
         child: GridTile(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
