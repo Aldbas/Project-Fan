@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:project_fan/team_roster_page.dart';
 
+import 'PlayersPage.dart';
 import 'Standings.dart';
 import 'matchup_page.dart';
 
@@ -22,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     Standings(),
     TeamRosterPage(),
     MatchUpPage(),
-    Placeholder(color: Colors.orange),
+    PlayersPage(),
     Placeholder(color: Colors.white,)
   ];
 
