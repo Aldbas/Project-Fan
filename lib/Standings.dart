@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 class Standings extends StatelessWidget {
+
+  List<String> standHeadings = ['Rank', 'Team', 'W-T-L', 'GB'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColorBlue,
       appBar: AppBar(
         backgroundColor: bgColorBlue,
         centerTitle: true,

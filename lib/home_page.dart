@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:project_fan/team_roster_page.dart';
 
 import 'PlayersPage.dart';
 import 'Standings.dart';
+import 'league_chat.dart';
 import 'matchup_page.dart';
 
 var bgColorBlue = Colors.blue[900];
@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-List<String> standHeadings = ['Rank', 'Team', 'W-T-L', 'GB'];
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
@@ -24,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     TeamRosterPage(),
     MatchUpPage(),
     PlayersPage(),
-    Placeholder(color: Colors.white,)
+    LeagueChatPage(),
   ];
 
   void _onItemTapped(int index) {

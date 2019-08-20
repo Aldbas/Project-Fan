@@ -4,7 +4,6 @@ import 'home_page.dart';
 
 class VersusStats {
   String cat;
-
   VersusStats({this.cat});
 }
 
@@ -37,8 +36,17 @@ class MatchUpPage extends StatelessWidget {
           ),
           backgroundColor: bgColorBlue,
         ),
-        body: Column(mainAxisAlignment: MainAxisAlignment.center,
+        body: Column(
+//          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Icon(Icons.arrow_back_ios),
+              Text('Week __'),
+              Icon(Icons.arrow_forward_ios),
+              Text('All Matchups'),
+                  Icon(Icons.keyboard_arrow_down)
+            ]),
             Container(
               decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.black,width: 3.0))),
               height: 50,
@@ -48,6 +56,10 @@ class MatchUpPage extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(child: Icon(Icons.access_alarm)),
                   Text('4',textScaleFactor: 2.0,),
+                  Column(children: <Widget>[
+                    Text('HELLO'),
+                    Text("ME")
+                  ]),
                   Container(
                     color: Colors.black,
                     width: 3.0,
@@ -63,6 +75,10 @@ class MatchUpPage extends StatelessWidget {
                     width: 3.0,
                     color: Colors.black,
                   ),
+                  Column(children: <Widget>[
+                    Text('HELLO'),
+                    Text("ME")
+                  ]),
                   Text('5',textScaleFactor: 2.0),
                   CircleAvatar(child: Icon(Icons.zoom_out_map))
                 ],
