@@ -39,14 +39,17 @@ class MatchUpPage extends StatelessWidget {
         body: Column(
 //          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Icon(Icons.arrow_back_ios),
-              Text('Week __'),
-              Icon(Icons.arrow_forward_ios),
-              Text('All Matchups'),
-                  Icon(Icons.keyboard_arrow_down)
-            ]),
+            Container(
+              height: 50,
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Icon(Icons.arrow_back_ios),
+                Text('Week __'),
+                Icon(Icons.arrow_forward_ios),
+                Text('All Matchups'),
+                    Icon(Icons.keyboard_arrow_down)
+              ]),
+            ),
             Container(
               decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.black,width: 3.0))),
               height: 50,
