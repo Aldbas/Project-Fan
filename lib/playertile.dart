@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
+
+import 'PlayersPage.dart';
 
 //TODO:ADD BACKEND NUMBERS/FIGURE OUT HOW TO GET
 class Position {
@@ -146,93 +151,97 @@ class _GridTileCardState extends State<GridTileCard> {
 }
 
 class GridTilePosition extends StatelessWidget {
+  final PlayerDetails playerDetails;
   final Position position;
+  final String playerPhoto;
 
-  GridTilePosition({this.position});
+
+  GridTilePosition({this.playerDetails,this.position, this.playerPhoto});
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: Container(
-        color:
+       return  Padding(
+          padding: const EdgeInsets.all(1.0),
+          child: Container(
+            color:
             Colors.white, //TODO:ADD Conditional statement 'If already playing'
-        height: 70,
-        child: GridTile(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              CircleAvatar(
-                  child: Text(position.name),
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.transparent),
-              CircleAvatar(
-                radius: 32.0,
-                backgroundColor: Colors.transparent,
-                child: Image.network(
-                    'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254'),
+            height: 70,
+            child: GridTile(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  CircleAvatar(
+                      child: Text(position.name),
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.transparent),
+                  CircleAvatar(
+                    radius: 32.0,
+                    backgroundColor: Colors.transparent,
+                    child: Image.network(
+                        playerPhoto),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
+                          '${playerDetails.teamId} - ${playerDetails.position}\n'
+                              'W 105-102 @OKC',
+                      style: TextStyle(fontSize: 12.0),
+                    ),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  'M. Bagley III' +
-                      ' Sac - PF\n'
-                          'W 105-102 @OKC',
-                  style: TextStyle(fontSize: 12.0),
-                ),
-              )
-            ],
+              footer: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text(
+                    '54/75',
+                    style: TextStyle(fontSize: 11.0, color: Colors.red),
+                  ),
+                  Text(
+                    '.556',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '35/50',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '.454',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '55',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '135',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '50',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '50',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '15',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '20',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                  Text(
+                    '22',
+                    style: TextStyle(fontSize: 11.0),
+                  ),
+                ],
+              ),
+            ),
           ),
-          footer: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text(
-                '54/75',
-                style: TextStyle(fontSize: 11.0, color: Colors.red),
-              ),
-              Text(
-                '.556',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '35/50',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '.454',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '55',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '135',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '50',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '50',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '15',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '20',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '22',
-                style: TextStyle(fontSize: 11.0),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+        );
   }
 }

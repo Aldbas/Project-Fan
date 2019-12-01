@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:json_table/json_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:project_fan/nbaTeams.dart';
 import 'package:project_fan/test.dart';
 
 import 'home_page.dart';
@@ -13,35 +14,51 @@ class PlayerDetails {
   final String lastName;
   final String playerId;
   final String teamId;
+  final String jerseyNumber;
+  final String position;
 
-  PlayerDetails({this.firstName, this.lastName, this.playerId, this.teamId});
+  PlayerDetails({
+    this.firstName,
+    this.lastName,
+    this.playerId,
+    this.teamId,
+    this.jerseyNumber,
+    this.position,
+  });
 
   factory PlayerDetails.fromJson(Map<String, dynamic> json) {
     return PlayerDetails(
       firstName: json['firstName'],
       lastName: json['lastName'],
       playerId: json['personId'],
-      teamId: json['teamId']
+      teamId: json['teamId'],
+      jerseyNumber: json['jersey'],
+      position: json['pos'],
     );
   }
-
 }
 
 Future<List<PlayerDetails>> loadPlayerList() async {
-  final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
+  final response =
+      await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
 //  PlayerDetails.fromJson(json.decode(response.body));
   final Map<String, dynamic> playerListJson = jsonDecode(response.body);
   List<PlayerDetails> players = List<PlayerDetails>();
-  playerListJson['league']['standard'].forEach((player) => players.add(PlayerDetails.fromJson(player)));
+  playerListJson['league']['standard']
+      .forEach((player) => players.add(PlayerDetails.fromJson(player)));
+//  players.removeWhere((player) => !player.isActive);
+  //Justin Anderson 1626147
+
 //  playerListJson
 //  print(playerListJson['league']['standard']);
 //  print(response.body);
   return players;
 }
 
-loadJSON () async {
-  final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
-return response.body;
+getPlayerProfilePicture(String playerId) {
+  final String playerProfilePhoto =
+      ('https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/$playerId.png');
+  return playerProfilePhoto;
 }
 
 class PlayersPage extends StatefulWidget {
@@ -50,8 +67,6 @@ class PlayersPage extends StatefulWidget {
 }
 
 class _PlayersPageState extends State<PlayersPage> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -282,28 +297,41 @@ class _PlayersPageState extends State<PlayersPage> {
                         ]),
                     Divider(),
                     SizedBox(
-                      height: 300,
+                      height: 500,
                       child: FutureBuilder<List<PlayerDetails>>(
-                      future: loadPlayerList(),
+                        future: loadPlayerList(),
                         builder: (context, snapshot) {
                           var jsonData = snapshot.data;
-                          if(snapshot.hasData) {
-                            print(jsonData.length);
-                          return ListView.builder(
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (context, index){
-                                PlayerDetails playerDetails = snapshot.data[index];
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Text( playerDetails.firstName),
-                                    Text(playerDetails.lastName),
-                                    Text( playerDetails.playerId),
+                          if (snapshot.hasData) {
+//                            print(jsonData.length);
+                            return ListView.builder(
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  PlayerDetails playerDetails =
+                                      snapshot.data[index];
+                                  final String playerProfilePhoto =
+                                      getPlayerProfilePicture(
+                                          playerDetails.playerId);
+
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Container(
+                                          height: 100,
+                                          width: 100,
+                                          child: Image.network(
+                                              playerProfilePhoto)),
+                                      Text(playerDetails.firstName),
+                                      Text(playerDetails.lastName),
+                                      Text(playerDetails.jerseyNumber),
+                                      Text(playerDetails.position),
+                                      Text(playerDetails.playerId),
 //                                    Text('teamId: ${playerDetails.teamId}'),
-                                  ],
-                                );
-                          });
-                        } else if (snapshot.hasError) {
+                                    ],
+                                  );
+                                });
+                          } else if (snapshot.hasError) {
                             return Text('${snapshot.error}');
                           }
                           return Container();

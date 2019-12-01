@@ -1,5 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:project_fan/nbaTeams.dart';
+
+import 'PlayersPage.dart';
 import 'home_page.dart';
 import 'players_profile.dart';
 import 'playertile.dart';
@@ -56,18 +61,61 @@ class TeamRosterPage extends StatefulWidget {
 }
 
 class _TeamRosterPageState extends State<TeamRosterPage> {
+   Future <List<NbaTeams>> nbaTeams;
+   Future <List<PlayerDetails>> playerDetails;
+
+//  _TeamRosterPageState({this.nbaTeams});
 //TODO WHAT IS HAPPENING IN THIS CODE BELOW
 
+  Future<List<PlayerDetails>> loadPlayerList() async {
+    final response =
+    await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
+//  PlayerDetails.fromJson(json.decode(response.body));
+    final Map<String, dynamic> playerListJson = jsonDecode(response.body);
+    List<PlayerDetails> players = [];
+    playerListJson['league']['standard']
+        .forEach((player) => players.add(PlayerDetails.fromJson(player)));
+//  players.removeWhere((player) => !player.isActive);
+
+    return players;
+  }
+
+  getPlayerProfilePicture(String playerId) {
+    final String playerProfilePhoto =
+    ('https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/$playerId.png');
+    return playerProfilePhoto;
+  }
+
+  Future<List<NbaTeams>> loadNbaTeams() async {
+    final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/teams.json');
+    if(response.statusCode == 200) {
+      final teamListJson = jsonDecode(response.body);
+      List<NbaTeams> nbaTeams= [];
+      teamListJson['league']['standard'].forEach((team) => nbaTeams.add(NbaTeams.fromJson(team)));
+//    teamListJson['league']['standard'].forEach((team) => nbaTeams.add(value));
+      nbaTeams.removeWhere((team) => !team.isNBAFranchise);
+      return nbaTeams;
+    }else {
+      throw Exception('Failed to load');
+    }
+  }
+
   @override
-  void initState() {
+  void initState()  {
+    super.initState();
 //    sort = false;
     selectedCategories = [];
     categories = Categories.getCat();
-    super.initState();
+     nbaTeams = loadNbaTeams();
+     playerDetails = loadPlayerList();
   }
 
   @override
   Widget build(BuildContext context) {
+//    print('player:$playerDetails');
+//    print('team: $nbaTeams');
+
+
     List<Widget> widgets = testCat
         .map((testCat) => Text(testCat,
             style: TextStyle(fontSize: 11.0, color: Colors.indigo)))
@@ -141,23 +189,70 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                 )
               ];
             },
-            body: ListView.builder(
-                padding: EdgeInsets.all(0.0),
-                itemCount: setPosition.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailsScreen(
-                                  setPosition: setPosition[index])));
+            body:
+            FutureBuilder(
+            future: Future.wait([
+              nbaTeams,
+              loadPlayerList()]),
+            builder: (context, snapshot) {
+              List <NbaTeams> nbaTeams = snapshot.data[0];
+              if (snapshot.hasData) {
+                return Container(
+                  color: Colors.white,
+                  child: ListView.builder(
+                    itemCount: 30,
+                    itemBuilder: (context, index) {
+                     PlayerDetails playerDetails = snapshot.data[1][index];
+                     print(nbaTeams[index].tricode);
+//                    print()
+
+
+//                    print(nbaTeams);
+
+                      return Row(
+                        children: <Widget>[
+//                          Text(playerDetails.teamId),
+                          Text(playerDetails.firstName),
+                        ],
+                      );
                     },
-                    child: GridTilePosition(
-                      position: setPosition[index],
-                    ),
-                  );
-                })),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error);
+              }
+              return Container(color: Colors.white,
+                child: CircularProgressIndicator(),
+              );
+            }),
+            )
+//            FutureBuilder(
+//              future: loadPlayerList(),
+//              builder: (context, snapshot) {
+//                return ListView.builder(
+//                    padding: EdgeInsets.all(0.0),
+//                    itemCount: setPosition.length,
+//                    itemBuilder: (BuildContext context, int index) {
+//                      PlayerDetails playerDetails = snapshot.data[index];
+////                      print(teams);
+//                      String playerPhoto = getPlayerProfilePicture(playerDetails.playerId);
+//                      return GestureDetector(
+//                        onTap: () {
+//                          Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                  builder: (context) => DetailsScreen(
+//                                      setPosition: setPosition[index])));
+//                        },
+//                        child: GridTilePosition(
+//                          position: setPosition[index],
+//                          playerDetails: playerDetails,
+//                          playerPhoto: playerPhoto,
+//                        ),
+//                      );
+//                    });
+//              },
+//            )),
       ),
     );
   }
