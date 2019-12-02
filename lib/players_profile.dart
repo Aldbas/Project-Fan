@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:project_fan/PlayersPage.dart';
+import 'package:project_fan/nbaTeams.dart';
 import 'package:project_fan/player_gamelog.dart';
 import 'player_news_and_updates.dart';
 import 'player_stats.dart';
-import 'playertile.dart';
+import 'playerTile.dart';
 import 'player_news_and_updates.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Position setPosition;
+  final PlayerDetails playerDetails;
+  final String nbaTeam;
+  final String playerPhoto;
 
-  DetailsScreen({Key key, @required this.setPosition}) : super(key: key);
+  DetailsScreen({Key key, @required this.setPosition, this.playerDetails, this.nbaTeam,this.playerPhoto}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.blue[900],
 //      appBar: AppBar(),
@@ -30,11 +36,11 @@ class DetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Marvin Bagley',
+                        '${playerDetails.firstName} ${playerDetails.lastName}',
                         style: TextStyle(fontSize: 20.0, color: Colors.white),
                       ),
                       Text(
-                        'PF - Sacramento Kings - #35',
+                        '${playerDetails.position} - $nbaTeam - ${playerDetails.jerseyNumber}',
                         style: TextStyle(color: Colors.white),
                       ),
                       Text(
@@ -46,7 +52,7 @@ class DetailsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),
                     child: Image.network(
-                      'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254',
+                      playerPhoto,
                       scale: 2,
                     ),
                   ),

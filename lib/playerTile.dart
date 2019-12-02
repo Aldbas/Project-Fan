@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import 'PlayersPage.dart';
+import 'nbaTeams.dart';
 
 //TODO:ADD BACKEND NUMBERS/FIGURE OUT HOW TO GET
 class Position {
@@ -58,8 +59,9 @@ class GridTileCard extends StatefulWidget {
 class _GridTileCardState extends State<GridTileCard> {
 //  final Planet planet;
   final Position position;
-  _GridTileCardState({
-    this.position,
+
+
+  _GridTileCardState({this.position,
   });
   List<Categories> categories;
 
@@ -152,11 +154,12 @@ class _GridTileCardState extends State<GridTileCard> {
 
 class GridTilePosition extends StatelessWidget {
   final PlayerDetails playerDetails;
+  final String tricode;
   final Position position;
   final String playerPhoto;
 
 
-  GridTilePosition({this.playerDetails,this.position, this.playerPhoto});
+  GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode});
 
   @override
   Widget build(BuildContext context) {
@@ -183,8 +186,8 @@ class GridTilePosition extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                      '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                          '${playerDetails.teamId} - ${playerDetails.position}\n'
+                      '${playerDetails.firstName[0]}. ${playerDetails.playerId}' +
+                          ' $tricode - ${playerDetails.position}\n'
                               'W 105-102 @OKC',
                       style: TextStyle(fontSize: 12.0),
                     ),

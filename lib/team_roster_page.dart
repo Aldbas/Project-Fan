@@ -7,7 +7,7 @@ import 'package:project_fan/nbaTeams.dart';
 import 'PlayersPage.dart';
 import 'home_page.dart';
 import 'players_profile.dart';
-import 'playertile.dart';
+import 'playerTile.dart';
 
 import 'dart:math' as math;
 
@@ -97,6 +97,14 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
       return nbaTeams;
     }else {
       throw Exception('Failed to load');
+    }
+  }
+  
+  playerGameLog(String playerId) async {
+    final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players/${playerId}_gamelog.json');
+    if(response.statusCode == 200) {
+      final gameLogJson = jsonDecode(response.body);
+
     }
   }
 
@@ -190,69 +198,40 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
               ];
             },
             body:
+//
             FutureBuilder(
-            future: Future.wait([
-              nbaTeams,
-              loadPlayerList()]),
-            builder: (context, snapshot) {
-              List <NbaTeams> nbaTeams = snapshot.data[0];
-              if (snapshot.hasData) {
-                return Container(
-                  color: Colors.white,
-                  child: ListView.builder(
-                    itemCount: 30,
-                    itemBuilder: (context, index) {
-                     PlayerDetails playerDetails = snapshot.data[1][index];
-                     print(nbaTeams[index].tricode);
-//                    print()
-
-
-//                    print(nbaTeams);
-
-                      return Row(
-                        children: <Widget>[
-//                          Text(playerDetails.teamId),
-                          Text(playerDetails.firstName),
-                        ],
+              future: Future.wait([loadPlayerList(), nbaTeams]),
+              builder: (context, snapshot) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(0.0),
+                    itemCount: setPosition.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      PlayerDetails playerDetails = snapshot.data[0][index];
+                     List <NbaTeams> nbaTeam = snapshot.data[1];
+                     NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
+//                      print(teams);
+                      String playerPhoto = getPlayerProfilePicture(playerDetails.playerId);
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailsScreen(
+                                      playerDetails: playerDetails,
+                                      nbaTeam: hello.fullName,
+                                      setPosition: setPosition[index],
+                                      playerPhoto: playerPhoto)));
+                        },
+                        child: GridTilePosition(
+                          position: setPosition[index],
+                          playerDetails: playerDetails,
+                          playerPhoto: playerPhoto,
+                          tricode: hello.tricode?? '',
+                        ),
                       );
-                    },
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Text(snapshot.error);
-              }
-              return Container(color: Colors.white,
-                child: CircularProgressIndicator(),
-              );
-            }),
-            )
-//            FutureBuilder(
-//              future: loadPlayerList(),
-//              builder: (context, snapshot) {
-//                return ListView.builder(
-//                    padding: EdgeInsets.all(0.0),
-//                    itemCount: setPosition.length,
-//                    itemBuilder: (BuildContext context, int index) {
-//                      PlayerDetails playerDetails = snapshot.data[index];
-////                      print(teams);
-//                      String playerPhoto = getPlayerProfilePicture(playerDetails.playerId);
-//                      return GestureDetector(
-//                        onTap: () {
-//                          Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                  builder: (context) => DetailsScreen(
-//                                      setPosition: setPosition[index])));
-//                        },
-//                        child: GridTilePosition(
-//                          position: setPosition[index],
-//                          playerDetails: playerDetails,
-//                          playerPhoto: playerPhoto,
-//                        ),
-//                      );
-//                    });
-//              },
-//            )),
+                    });
+              },
+            )),
       ),
     );
   }
