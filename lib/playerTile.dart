@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:project_fan/model/game_boxscore.dart';
 import 'package:project_fan/team_roster_page.dart';
 
 import 'PlayersPage.dart';
@@ -32,9 +33,7 @@ List<Position> setPosition = [
 
 class Categories {
   String cat;
-  Categories({
-    this.cat,
-  });
+  Categories({this.cat,});
 
   static List<Categories> getCat() {
     return <Categories>[
@@ -53,116 +52,117 @@ class Categories {
   }
 }
 
-class GridTileCard extends StatefulWidget {
-  @override
-  _GridTileCardState createState() => _GridTileCardState();
-}
+//class GridTileCard extends StatefulWidget {
+//  @override
+//  _GridTileCardState createState() => _GridTileCardState();
+//}
 
-class _GridTileCardState extends State<GridTileCard> {
-//  final Planet planet;
-  final Position position;
-
-
-  _GridTileCardState({this.position,
-  });
-  List<Categories> categories;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: Container(
-        color: Colors.white,
-        height: 90,
-        child: GridTile(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              CircleAvatar(
-                  child: Text(position.name),
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.transparent),
-              CircleAvatar(
-                radius: 32.0,
-                backgroundColor: Colors.transparent,
-                child: Image.network(
-                    'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254'),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  'M. Bagley III' +
-                      ' Sac - PF\n'
-                          'W 105-102 @OKC',
-                  style: TextStyle(fontSize: 12.0),
-                ),
-              )
-            ],
-          ),
-          footer: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text(
-                '54/75',
-                style: TextStyle(fontSize: 11.0, color: Colors.red),
-              ),
-              Text(
-                '.556',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '35/50',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '.454',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '55',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '135',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '50',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '50',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '15',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '20',
-                style: TextStyle(fontSize: 11.0),
-              ),
-              Text(
-                '22',
-                style: TextStyle(fontSize: 11.0),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+//class _GridTileCardState extends State<GridTileCard> {
+////  final Planet planet;
+//  final Position position;
+//
+//
+//  _GridTileCardState({this.position,
+//  });
+//  List<Categories> categories;
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return Padding(
+//      padding: const EdgeInsets.all(1.0),
+//      child: Container(
+//        color: Colors.white,
+//        height: 90,
+//        child: GridTile(
+//          child: Row(
+//            mainAxisAlignment: MainAxisAlignment.start,
+//            children: <Widget>[
+//              CircleAvatar(
+//                  child: Text(position.name),
+//                  foregroundColor: Colors.black,
+//                  backgroundColor: Colors.transparent),
+//              CircleAvatar(
+//                radius: 32.0,
+//                backgroundColor: Colors.transparent,
+//                child: Image.network(
+//                    'http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277848.png&w=350&h=254'),
+//              ),
+//              Padding(
+//                padding: const EdgeInsets.only(left: 8.0),
+//                child: Text(
+//                  'M. Bagley III' +
+//                      ' Sac - PF\n'
+//                          'W 105-102 @OKC',
+//                  style: TextStyle(fontSize: 12.0),
+//                ),
+//              )
+//            ],
+//          ),
+//          footer: Row(
+//            mainAxisAlignment: MainAxisAlignment.spaceAround,
+//            children: <Widget>[
+//              Text(
+//                '54/75',
+//                style: TextStyle(fontSize: 11.0, color: Colors.red),
+//              ),
+//              Text(
+//                '.556',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '35/50',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '.454',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '55',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '135',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '50',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '50',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '15',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '20',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//              Text(
+//                '22',
+//                style: TextStyle(fontSize: 11.0),
+//              ),
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
+//  }
+//}
 
 class GridTilePosition extends StatelessWidget {
   final PlayerDetails playerDetails;
   final String tricode;
   final Position position;
   final String playerPhoto;
-  final Stats stats;
+  final PlayerStats stats;
+  final List<NbaTeams> nbaTeam;
 
 
-  GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode, this.stats});
+  GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode, this.stats,this.nbaTeam});
 
 
   getPlayerStats(String playerId) async  {
@@ -176,15 +176,41 @@ class GridTilePosition extends StatelessWidget {
       throw Exception('Failed to load');
     }
   }
-  getBoxScore() {
+  getBoxScore() async {
+//    https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json
+//    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
+    final response =  await http.get('https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
+    if(response.statusCode == 200) {
+      final testBody = jsonDecode(response.body);
+      Hello okay = Hello.fromJson(testBody);
+//      print(okay.basicGameData.gameId);
+//      print(okay.stats.playerStats[0].points);
+//      print(okay.basicGameData);
+      return Hello.fromJson(testBody);
+    }
 
   }
   @override
   Widget build(BuildContext context) {
        return  FutureBuilder(
-         future: getPlayerStats(playerDetails.playerId),
+         future: getBoxScore(),
          builder: (context, snapshot){
-           List<PlayerGameLog> yes = snapshot.data;
+           Hello okay = snapshot.data;
+           print(okay.basicGameData.startTimeEastern);
+//           Hello okay = snapshot.data;
+//           print(okay.basicGameData.gameId);
+//           List<PlayerGameLog> yes = snapshot.data;
+//           bool homeGame = yes[0].isHomeGame;
+//           bool isGameActive = true;
+//           Team hTeam = yes[0].hTeam;
+//           Team vTeam = yes[0].vTeam;
+//           String where = homeGame? 'v' : '@';
+//           int playerTeam = yes[0].vTeam.teamId  == playerDetails.teamId ? int.parse(vTeam.score) : int.parse(hTeam.score);
+//           int oppTeam = yes[0].hTeam.teamId != playerDetails.teamId ? int.parse(hTeam.score): int.parse(vTeam.score);
+//           String winner = playerTeam > oppTeam ? 'W' : 'L';
+//           NbaTeams game = nbaTeam.firstWhere((team) => team.teamId == (!homeGame? yes[0].hTeam.teamId : yes[0].vTeam.teamId));
+//           String game = nbaTeam[0].teamId == yes[0].vTeam.teamId? 'hello' : 'NOPE';
+//           print(playerDetails.playerId);
            return Padding(
              padding: const EdgeInsets.all(1.0),
              child: Container(
@@ -209,8 +235,8 @@ class GridTilePosition extends StatelessWidget {
                        padding: const EdgeInsets.only(left: 8.0),
                        child: Text(
                          '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                             ' $tricode - ${playerDetails.position}\n'
-                                 'W 105-102 @OKC',
+                             ' $tricode - ${playerDetails.position}\n',
+//                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
                          style: TextStyle(fontSize: 12.0),
                        ),
                      )
@@ -239,12 +265,12 @@ class GridTilePosition extends StatelessWidget {
                        ,
                        style: TextStyle(fontSize: 11.0),
                      ),
-                     Text(
-                       yes[0].stats.points,
+                     Text('',
+//                       yes[0].stats.points,
                        style: TextStyle(fontSize: 11.0),
                      ),
-                     Text(
-                       yes[0].stats.totReb,
+                     Text('',
+//                       yes[0].stats.totReb,
                        style: TextStyle(fontSize: 11.0),
                      ),
                      Text(

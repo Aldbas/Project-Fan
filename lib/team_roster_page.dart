@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:project_fan/model/playerGameLog.dart';
 import 'package:project_fan/model/today_game_scoreboard.dart';
 import 'package:project_fan/nbaTeams.dart';
+import 'package:intl/intl.dart';
 
 import 'PlayersPage.dart';
 import 'home_page.dart';
@@ -142,9 +143,14 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 
   @override
   Widget build(BuildContext context) {
+    var now = DateTime.now();
+    var helloss = DateFormat('E, MMM dd');
+    var hellos = helloss.format(now);
+    var datenow = DateFormat('yMdd');
+    var yes = datenow.format(now);
 //    print('player:$playerDetails');
-//    print('team: $nbaTeams');
-
+    print('DATE: $yes');
+      String date = 'Sat, Mar 30';
 
     List<Widget> widgets = testCat
         .map((testCat) => Text(testCat,
@@ -166,7 +172,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     background: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                       Text('Sat, Mar 30',style: TextStyle(color: Colors.white),),
+                       Text('$hellos',style: TextStyle(color: Colors.white),),
                         Text(
                           'BEST LEAGUE',
                           style: TextStyle(color: Colors.white),
@@ -266,6 +272,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                           playerDetails: playerDetails,
                           playerPhoto: playerPhoto,
                           tricode: hello.tricode?? '',
+                          nbaTeam: nbaTeam,
                         ),
                       );
                     });

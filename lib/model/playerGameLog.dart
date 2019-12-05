@@ -4,7 +4,7 @@ class PlayerGameLog {
   bool isHomeGame;
   Team hTeam;
   Team vTeam;
-  Stats stats;
+  PlayerStats playerStats;
 
   PlayerGameLog({
     this.gameId,
@@ -12,7 +12,7 @@ class PlayerGameLog {
     this.isHomeGame,
     this.vTeam,
     this.hTeam,
-    this.stats
+    this.playerStats
 });
 
   factory PlayerGameLog.fromJson(Map<String, dynamic> json) => PlayerGameLog(
@@ -21,7 +21,7 @@ class PlayerGameLog {
     isHomeGame: json['isHomeGame'],
     hTeam: Team.fromJson(json['hTeam']),
     vTeam: Team.fromJson(json['vTeam']),
-    stats: Stats.fromJson(json['stats']),
+    playerStats: PlayerStats.fromJson(json['stats']),
   );
 
 }
@@ -29,18 +29,20 @@ class PlayerGameLog {
 class Team {
   String teamId;
   String score;
+  String triCode;
   bool isWinner;
 
-  Team({this.score,this.teamId,this.isWinner});
+  Team({this.score,this.teamId,this.isWinner,this.triCode});
 
   factory Team.fromJson(Map<String, dynamic> json) => Team(
     teamId: json['teamId'],
     score: json['score'],
+    triCode: json['triCode'],
     isWinner: json['isWinner']
   );
 }
 
-class Stats {
+class PlayerStats {
   String personId;
   String firstName;
   String lastName;
@@ -71,7 +73,7 @@ class Stats {
   String blocks;
   String plusMinus;
 
-  Stats ({
+  PlayerStats ({
     this.personId,
     this.firstName,
     this.lastName,
@@ -103,7 +105,7 @@ class Stats {
     this.plusMinus,
 });
 
-  factory Stats.fromJson(Map<String, dynamic> json) => Stats(
+  factory PlayerStats.fromJson(Map<String, dynamic> json) => PlayerStats(
     personId: json["personId"],
     firstName: json["firstName"],
     lastName: json["lastName"],

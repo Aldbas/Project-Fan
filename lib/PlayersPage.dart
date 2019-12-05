@@ -16,6 +16,7 @@ class PlayerDetails {
    String teamId;
    String jerseyNumber;
    String position;
+   String teamTricode;
 
   PlayerDetails({
     this.firstName,
@@ -24,6 +25,7 @@ class PlayerDetails {
     this.teamId,
     this.jerseyNumber,
     this.position,
+    this.teamTricode,
   });
 
   factory PlayerDetails.fromJson(Map<String, dynamic> json) {
