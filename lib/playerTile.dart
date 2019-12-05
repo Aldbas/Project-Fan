@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:project_fan/team_roster_page.dart';
 
 import 'PlayersPage.dart';
 import 'model/playerGameLog.dart';
@@ -163,90 +164,111 @@ class GridTilePosition extends StatelessWidget {
 
   GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode, this.stats});
 
+
+  getPlayerStats(String playerId) async  {
+    final response = await  http.get('https://data.nba.net/data/10s/prod/v1/2019/players/${playerId}_gamelog.json'); //1626162
+    if(response.statusCode == 200){
+      final testBody = jsonDecode(response.body);
+      List<PlayerGameLog> hello = [];
+      testBody['league']['standard'].forEach((gameLog) => hello.add(PlayerGameLog.fromJson(gameLog)));
+      return hello;
+    }else {
+      throw Exception('Failed to load');
+    }
+  }
+  getBoxScore() {
+
+  }
   @override
   Widget build(BuildContext context) {
-       return  Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: Container(
-            color:
-            Colors.white, //TODO:ADD Conditional statement 'If already playing'
-            height: 70,
-            child: GridTile(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  CircleAvatar(
-                      child: Text(position.name),
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.transparent),
-                  CircleAvatar(
-                    radius: 32.0,
-                    backgroundColor: Colors.transparent,
-                    child: Image.network(
-                        playerPhoto),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                          ' $tricode - ${playerDetails.position}\n'
-                              'W 105-102 @OKC',
-                      style: TextStyle(fontSize: 12.0),
-                    ),
-                  )
-                ],
-              ),
-              footer: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Text(
-                    '54/75',
-                    style: TextStyle(fontSize: 11.0, color: Colors.red),
-                  ),
-                  Text(
-                    '.556',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '35/50',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '.454',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '55',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '135',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '50',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '50',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '15',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '20',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                  Text(
-                    '22',
-                    style: TextStyle(fontSize: 11.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+       return  FutureBuilder(
+         future: getPlayerStats(playerDetails.playerId),
+         builder: (context, snapshot){
+           List<PlayerGameLog> yes = snapshot.data;
+           return Padding(
+             padding: const EdgeInsets.all(1.0),
+             child: Container(
+               color:
+               Colors.white, //TODO:ADD Conditional statement 'If already playing'
+               height: 70,
+               child: GridTile(
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.start,
+                   children: <Widget>[
+                     CircleAvatar(
+                         child: Text(position.name),
+                         foregroundColor: Colors.black,
+                         backgroundColor: Colors.transparent),
+                     CircleAvatar(
+                       radius: 32.0,
+                       backgroundColor: Colors.transparent,
+                       child: Image.network(
+                           playerPhoto),
+                     ),
+                     Padding(
+                       padding: const EdgeInsets.only(left: 8.0),
+                       child: Text(
+                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
+                             ' $tricode - ${playerDetails.position}\n'
+                                 'W 105-102 @OKC',
+                         style: TextStyle(fontSize: 12.0),
+                       ),
+                     )
+                   ],
+                 ),
+                 footer: Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                   children: <Widget>[
+                     Text(
+                       '54/75',
+                       style: TextStyle(fontSize: 11.0, color: Colors.red),
+                     ),
+                     Text(
+                       '.556',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       '35/50',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       '.454',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text('55'
+                       ,
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       yes[0].stats.points,
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       yes[0].stats.totReb,
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       '50',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       '15',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       '20',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                     Text(
+                       '22',
+                       style: TextStyle(fontSize: 11.0),
+                     ),
+                   ],
+                 ),
+               ),
+             ),
+           );
+         }
+       );
   }
 }

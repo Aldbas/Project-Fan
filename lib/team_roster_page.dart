@@ -65,7 +65,7 @@ class TeamRosterPage extends StatefulWidget {
 class _TeamRosterPageState extends State<TeamRosterPage> {
    Future <List<NbaTeams>> nbaTeams;
    Future <List<PlayerDetails>> playerDetails;
-   Future <dynamic> playerLog;
+//   Future <dynamic> playerLog;
 
 //  _TeamRosterPageState({this.nbaTeams});
 //TODO WHAT IS HAPPENING IN THIS CODE BELOW
@@ -108,6 +108,10 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     if(response.statusCode == 200) {
       final gameLogJson = jsonDecode(response.body);
 
+      List<PlayerGameLog> playerLog = [];
+      gameLogJson['leageue']['standard'].forEach((gameLog) => playerLog.add(gameLog));
+      print(playerLog);
+      return playerLog;
     }
   }
 
@@ -124,19 +128,6 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
       throw Exception('Failed to load');
     }
   }
-  getPlayerStats() async  {
-    final response = await  http.get('https://data.nba.net/data/10s/prod/v1/2019/players/1626162_gamelog.json');
-    if(response.statusCode == 200){
-      final testBody = jsonDecode(response.body);
-      List<PlayerGameLog> hello = [];
-      testBody['league']['standard'].forEach((gameLog) => hello.add(PlayerGameLog.fromJson(gameLog)));
-      print(hello);
-      return hello;
-    }else {
-      throw Exception('Failed to load');
-    }
-
-  }
 
   @override
   void initState()  {
@@ -146,7 +137,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     categories = Categories.getCat();
      nbaTeams = loadNbaTeams();
      playerDetails = loadPlayerList();
-     playerLog = getPlayerStats();
+//     playerLog = getPlayerStats();
   }
 
   @override
@@ -247,7 +238,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 //                      ],
 //                    ));
 //                },
-             future: Future.wait([playerDetails, nbaTeams, playerLog]),
+             future: Future.wait([playerDetails, nbaTeams,]),
               builder: (context, snapshot) {
                 return ListView.builder(
                     padding: EdgeInsets.all(0.0),
@@ -255,9 +246,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     itemBuilder: (BuildContext context, int index) {
                       PlayerDetails playerDetails = snapshot.data[0][index];
                      List <NbaTeams> nbaTeam = snapshot.data[1];
-                     List <PlayerGameLog> okay = snapshot.data[2];
-                     print(okay[0].gameId);
-                      print(okay[0].gameDateUTC.replaceAll('-', ''));
+//                      print(okay[0].gameDateUTC.replaceAll('-', ''));
                       NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
 //                      print(teams);
                       String playerPhoto = getPlayerProfilePicture(playerDetails.playerId);
