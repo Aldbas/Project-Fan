@@ -10,12 +10,12 @@ import 'package:project_fan/test.dart';
 import 'home_page.dart';
 
 class PlayerDetails {
-  final String firstName;
-  final String lastName;
-  final String playerId;
-  final String teamId;
-  final String jerseyNumber;
-  final String position;
+   String firstName;
+   String lastName;
+   String playerId;
+   String teamId;
+   String jerseyNumber;
+   String position;
 
   PlayerDetails({
     this.firstName,

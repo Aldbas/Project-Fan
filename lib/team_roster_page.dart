@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:project_fan/model/playerGameLog.dart';
+import 'package:project_fan/model/today_game_scoreboard.dart';
 import 'package:project_fan/nbaTeams.dart';
 
 import 'PlayersPage.dart';
@@ -63,6 +65,7 @@ class TeamRosterPage extends StatefulWidget {
 class _TeamRosterPageState extends State<TeamRosterPage> {
    Future <List<NbaTeams>> nbaTeams;
    Future <List<PlayerDetails>> playerDetails;
+   Future <dynamic> playerLog;
 
 //  _TeamRosterPageState({this.nbaTeams});
 //TODO WHAT IS HAPPENING IN THIS CODE BELOW
@@ -108,6 +111,33 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     }
   }
 
+  gameScoreBoard() async {
+    final response = await http.get('https://data.nba.net/10s/prod/v2/20191202/scoreboard.json');
+    if(response.statusCode == 200) {
+      final testBody = jsonDecode(response.body);
+      List<Game> test = [];
+
+      testBody['games'].forEach((game) => test.add(Game.fromJson(game)));
+      return test;
+    }else {
+      print('error');
+      throw Exception('Failed to load');
+    }
+  }
+  getPlayerStats() async  {
+    final response = await  http.get('https://data.nba.net/data/10s/prod/v1/2019/players/1626162_gamelog.json');
+    if(response.statusCode == 200){
+      final testBody = jsonDecode(response.body);
+      List<PlayerGameLog> hello = [];
+      testBody['league']['standard'].forEach((gameLog) => hello.add(PlayerGameLog.fromJson(gameLog)));
+      print(hello);
+      return hello;
+    }else {
+      throw Exception('Failed to load');
+    }
+
+  }
+
   @override
   void initState()  {
     super.initState();
@@ -116,6 +146,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     categories = Categories.getCat();
      nbaTeams = loadNbaTeams();
      playerDetails = loadPlayerList();
+     playerLog = getPlayerStats();
   }
 
   @override
@@ -200,7 +231,23 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
             body:
 //
             FutureBuilder(
-              future: Future.wait([loadPlayerList(), nbaTeams]),
+//              future: gameScoreBoard(),
+//                builder: (BuildContext context, AsyncSnapshot snapshot) {
+//                List<Game> game = snapshot.data;
+//                print(game[0].gameId);
+//                print(game[0].startDateEastern);
+//                return Container(color: Colors.white,
+//                    child:Row(
+//                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                      children: <Widget>[
+//                        Text(game[1].vTeam.triCode),
+//                        Text(game[1].hTeam.triCode),
+//                        Text(game[1].hTeam.score),
+//                        Text(game[1].vTeam.score)
+//                      ],
+//                    ));
+//                },
+             future: Future.wait([playerDetails, nbaTeams, playerLog]),
               builder: (context, snapshot) {
                 return ListView.builder(
                     padding: EdgeInsets.all(0.0),
@@ -208,7 +255,10 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     itemBuilder: (BuildContext context, int index) {
                       PlayerDetails playerDetails = snapshot.data[0][index];
                      List <NbaTeams> nbaTeam = snapshot.data[1];
-                     NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
+                     List <PlayerGameLog> okay = snapshot.data[2];
+                     print(okay[0].gameId);
+                      print(okay[0].gameDateUTC.replaceAll('-', ''));
+                      NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
 //                      print(teams);
                       String playerPhoto = getPlayerProfilePicture(playerDetails.playerId);
                       return GestureDetector(

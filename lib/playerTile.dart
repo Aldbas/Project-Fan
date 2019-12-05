@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import 'PlayersPage.dart';
+import 'model/playerGameLog.dart';
 import 'nbaTeams.dart';
 
 //TODO:ADD BACKEND NUMBERS/FIGURE OUT HOW TO GET
@@ -157,9 +158,10 @@ class GridTilePosition extends StatelessWidget {
   final String tricode;
   final Position position;
   final String playerPhoto;
+  final Stats stats;
 
 
-  GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode});
+  GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode, this.stats});
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +188,7 @@ class GridTilePosition extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                      '${playerDetails.firstName[0]}. ${playerDetails.playerId}' +
+                      '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
                           ' $tricode - ${playerDetails.position}\n'
                               'W 105-102 @OKC',
                       style: TextStyle(fontSize: 12.0),
