@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:project_fan/model/game_boxscore.dart';
 import 'package:project_fan/team_roster_page.dart';
 
 import 'PlayersPage.dart';
+import 'model/nba_games.dart';
 import 'model/playerGameLog.dart';
 import 'nbaTeams.dart';
 
@@ -33,7 +35,9 @@ List<Position> setPosition = [
 
 class Categories {
   String cat;
-  Categories({this.cat,});
+  Categories({
+    this.cat,
+  });
 
   static List<Categories> getCat() {
     return <Categories>[
@@ -161,26 +165,34 @@ class GridTilePosition extends StatelessWidget {
   final PlayerStats stats;
   final List<NbaTeams> nbaTeam;
 
+  GridTilePosition(
+      {this.playerDetails,
+      this.position,
+      this.playerPhoto,
+      this.tricode,
+      this.stats,
+      this.nbaTeam});
 
-  GridTilePosition({this.playerDetails,this.position, this.playerPhoto,this.tricode, this.stats,this.nbaTeam});
-
-
-  getPlayerStats(String playerId) async  {
-    final response = await  http.get('https://data.nba.net/data/10s/prod/v1/2019/players/${playerId}_gamelog.json'); //1626162
-    if(response.statusCode == 200){
+  getPlayerStats(String playerId) async {
+    final response = await http.get(
+        'https://data.nba.net/data/10s/prod/v1/2019/players/${playerId}_gamelog.json'); //1626162
+    if (response.statusCode == 200) {
       final testBody = jsonDecode(response.body);
       List<PlayerGameLog> hello = [];
-      testBody['league']['standard'].forEach((gameLog) => hello.add(PlayerGameLog.fromJson(gameLog)));
+      testBody['league']['standard']
+          .forEach((gameLog) => hello.add(PlayerGameLog.fromJson(gameLog)));
       return hello;
-    }else {
+    } else {
       throw Exception('Failed to load');
     }
   }
+
   getBoxScore() async {
 //    https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json
 //    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
-    final response =  await http.get('https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
-    if(response.statusCode == 200) {
+    final response = await http.get(
+        'https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
+    if (response.statusCode == 200) {
       final testBody = jsonDecode(response.body);
       Hello okay = Hello.fromJson(testBody);
 //      print(okay.basicGameData.gameId);
@@ -188,15 +200,34 @@ class GridTilePosition extends StatelessWidget {
 //      print(okay.basicGameData);
       return Hello.fromJson(testBody);
     }
-
   }
+  Future<List<NbaGames>> getListOfGames() async {
+    var now = DateTime.now();
+    var format = DateFormat('yMdd');
+    var date = format.format(now);
+
+    final response = await http.get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
+    final Map<String, dynamic> gameListJson = jsonDecode(response.body);
+    print(gameListJson);
+    List<NbaGames> nbaGames = [];
+    gameListJson['games'].forEach((game) => nbaGames.add(game));
+//    print(nbaGames);
+    return nbaGames;
+  }
+
   @override
   Widget build(BuildContext context) {
-       return  FutureBuilder(
-         future: getBoxScore(),
-         builder: (context, snapshot){
-           Hello okay = snapshot.data;
-           print(okay.basicGameData.startTimeEastern);
+    return FutureBuilder(
+        future: getListOfGames(),
+        builder: (context, snapshot) {
+          NbaGames nbaGames = snapshot.data;
+          print(nbaGames);
+          print(snapshot.data);
+//          Hello okay = snapshot.data;
+//          PlayerStats stats = okay.stats.playerStats.firstWhere(
+//              (player) => player.personId == playerDetails.playerId);
+//          print(stats.lastName);
+
 //           Hello okay = snapshot.data;
 //           print(okay.basicGameData.gameId);
 //           List<PlayerGameLog> yes = snapshot.data;
@@ -211,90 +242,59 @@ class GridTilePosition extends StatelessWidget {
 //           NbaTeams game = nbaTeam.firstWhere((team) => team.teamId == (!homeGame? yes[0].hTeam.teamId : yes[0].vTeam.teamId));
 //           String game = nbaTeam[0].teamId == yes[0].vTeam.teamId? 'hello' : 'NOPE';
 //           print(playerDetails.playerId);
-           return Padding(
-             padding: const EdgeInsets.all(1.0),
-             child: Container(
-               color:
-               Colors.white, //TODO:ADD Conditional statement 'If already playing'
-               height: 70,
-               child: GridTile(
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.start,
-                   children: <Widget>[
-                     CircleAvatar(
-                         child: Text(position.name),
-                         foregroundColor: Colors.black,
-                         backgroundColor: Colors.transparent),
-                     CircleAvatar(
-                       radius: 32.0,
-                       backgroundColor: Colors.transparent,
-                       child: Image.network(
-                           playerPhoto),
-                     ),
-                     Padding(
-                       padding: const EdgeInsets.only(left: 8.0),
-                       child: Text(
-                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                             ' $tricode - ${playerDetails.position}\n',
+          return Padding(
+            padding: const EdgeInsets.all(1.0),
+            child: Container(
+              color: Colors
+                  .white, //TODO:change card 'If already playing'
+              height: 70,
+              child: GridTile(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    CircleAvatar(
+                        child: Text(position.name),
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.transparent),
+                    CircleAvatar(
+                      radius: 32.0,
+                      backgroundColor: Colors.transparent,
+                      child: Image.network(playerPhoto),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
+                            ' $tricode - ${playerDetails.position}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
-                         style: TextStyle(fontSize: 12.0),
-                       ),
-                     )
-                   ],
-                 ),
-                 footer: Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                   children: <Widget>[
-                     Text(
-                       '54/75',
-                       style: TextStyle(fontSize: 11.0, color: Colors.red),
-                     ),
-                     Text(
-                       '.556',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text(
-                       '35/50',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text(
-                       '.454',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text('55'
-                       ,
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text('',
-//                       yes[0].stats.points,
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text('',
-//                       yes[0].stats.totReb,
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text(
-                       '50',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text(
-                       '15',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text(
-                       '20',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                     Text(
-                       '22',
-                       style: TextStyle(fontSize: 11.0),
-                     ),
-                   ],
-                 ),
-               ),
-             ),
-           );
-         }
-       );
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    )
+                  ],
+                ),
+                footer: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+//                    buildText('${stats.fga}/ ${stats.fgm}', color: Colors.red), // FGM/A
+//                    buildText('${stats.fgp}%'), //FG%
+//                    buildText('${stats.ftm}/${stats.fta}'), //FTM/A
+//                    buildText('${stats.ftp}%'),//FT%
+//                    buildText('${stats.tpm}'),//3PTM
+//                    buildText('${stats.points}'),//points
+//                    buildText('${stats.totReb}'),//total rebounds
+//                    buildText('${stats.assists}'), //assists
+//                    buildText('${stats.steals}'),//steals
+//                    buildText('${stats.blocks}'),
+//                    buildText('${stats.turnovers}'),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget buildText(String text, {Color color}) {
+    return Text(text, style: TextStyle(fontSize: 11.0, color: color));
   }
 }

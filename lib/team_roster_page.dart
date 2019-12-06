@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:project_fan/model/nba_games.dart';
 import 'package:project_fan/model/playerGameLog.dart';
 import 'package:project_fan/model/today_game_scoreboard.dart';
 import 'package:project_fan/nbaTeams.dart';
@@ -65,15 +66,29 @@ class TeamRosterPage extends StatefulWidget {
 
 class _TeamRosterPageState extends State<TeamRosterPage> {
    Future <List<NbaTeams>> nbaTeams;
-   Future <List<PlayerDetails>> playerDetails;
+   Future <List<PlayerDetails>> playerList;
+   Future <List<NbaGames>> nbaGames;
+   var now = DateTime.now();
+   var format = DateFormat('yMdd');
 //   Future <dynamic> playerLog;
 
 //  _TeamRosterPageState({this.nbaTeams});
 //TODO WHAT IS HAPPENING IN THIS CODE BELOW
+  
+  Future<List<NbaGames>>getListOfGames() async {
+    var date = format.format(now);
+
+    final response = await http.get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
+    final Map<String, dynamic> gameListJson = jsonDecode(response.body);
+    print(gameListJson);
+    List<NbaGames> nbaGames = [];
+    gameListJson['games'].forEach((game) => nbaGames.add(game));
+    print(nbaGames);
+    return nbaGames;
+  }
 
   Future<List<PlayerDetails>> loadPlayerList() async {
-    final response =
-    await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
+    final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
 //  PlayerDetails.fromJson(json.decode(response.body));
     final Map<String, dynamic> playerListJson = jsonDecode(response.body);
     List<PlayerDetails> players = [];
@@ -136,21 +151,22 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 //    sort = false;
     selectedCategories = [];
     categories = Categories.getCat();
-     nbaTeams = loadNbaTeams();
-     playerDetails = loadPlayerList();
+    nbaGames = getListOfGames();
+    nbaTeams = loadNbaTeams();
+    playerList = loadPlayerList();
+
 //     playerLog = getPlayerStats();
   }
 
   @override
   Widget build(BuildContext context) {
     var now = DateTime.now();
-    var helloss = DateFormat('E, MMM dd');
-    var hellos = helloss.format(now);
-    var datenow = DateFormat('yMdd');
-    var yes = datenow.format(now);
-//    print('player:$playerDetails');
-    print('DATE: $yes');
-      String date = 'Sat, Mar 30';
+    var format = DateFormat('E, MMM dd');
+    var date = format.format(now);
+
+//    print('player:$nbaGames');
+//    print(nbaTeams);
+//    print(playerList);
 
     List<Widget> widgets = testCat
         .map((testCat) => Text(testCat,
@@ -172,7 +188,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     background: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                       Text('$hellos',style: TextStyle(color: Colors.white),),
+                       Text('$date',style: TextStyle(color: Colors.white),),
                         Text(
                           'BEST LEAGUE',
                           style: TextStyle(color: Colors.white),
@@ -244,7 +260,9 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 //                      ],
 //                    ));
 //                },
-             future: Future.wait([playerDetails, nbaTeams,]),
+             future: Future.wait([playerList, nbaTeams,
+               nbaGames
+             ]),
               builder: (context, snapshot) {
                 return ListView.builder(
                     padding: EdgeInsets.all(0.0),
@@ -252,6 +270,8 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     itemBuilder: (BuildContext context, int index) {
                       PlayerDetails playerDetails = snapshot.data[0][index];
                      List <NbaTeams> nbaTeam = snapshot.data[1];
+//                     List<NbaGames> nbaGame = snapshot.data[2];
+//                     print(nbaGame[0].gameId);
 //                      print(okay[0].gameDateUTC.replaceAll('-', ''));
                       NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
 //                      print(teams);
