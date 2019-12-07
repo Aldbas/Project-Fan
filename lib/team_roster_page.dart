@@ -80,10 +80,8 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 
     final response = await http.get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
     final Map<String, dynamic> gameListJson = jsonDecode(response.body);
-    print(gameListJson);
     List<NbaGames> nbaGames = [];
-    gameListJson['games'].forEach((game) => nbaGames.add(game));
-    print(nbaGames);
+    gameListJson['games'].forEach((game) => nbaGames.add(NbaGames.fromJson(game)));
     return nbaGames;
   }
 
@@ -260,18 +258,22 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 //                      ],
 //                    ));
 //                },
-             future: Future.wait([playerList, nbaTeams,
+             future: Future.wait([
+               playerList,
+               nbaTeams,
                nbaGames
              ]),
               builder: (context, snapshot) {
+               if(!snapshot.hasData) {
+                 return Container();
+               }
                 return ListView.builder(
                     padding: EdgeInsets.all(0.0),
                     itemCount: setPosition.length,
                     itemBuilder: (BuildContext context, int index) {
                       PlayerDetails playerDetails = snapshot.data[0][index];
                      List <NbaTeams> nbaTeam = snapshot.data[1];
-//                     List<NbaGames> nbaGame = snapshot.data[2];
-//                     print(nbaGame[0].gameId);
+                     List<NbaGames> nbaGame = snapshot.data[2];
 //                      print(okay[0].gameDateUTC.replaceAll('-', ''));
                       NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
 //                      print(teams);
@@ -287,12 +289,13 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                                       setPosition: setPosition[index],
                                       playerPhoto: playerPhoto)));
                         },
-                        child: GridTilePosition(
+                        child: PlayerGridTile(
                           position: setPosition[index],
                           playerDetails: playerDetails,
                           playerPhoto: playerPhoto,
-                          tricode: hello.tricode?? '',
+                          triCode: hello.tricode?? '',
                           nbaTeam: nbaTeam,
+                          nbaGame: nbaGame,
                         ),
                       );
                     });

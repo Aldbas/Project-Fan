@@ -157,21 +157,23 @@ class Categories {
 //  }
 //}
 
-class GridTilePosition extends StatelessWidget {
+class PlayerGridTile extends StatelessWidget {
   final PlayerDetails playerDetails;
-  final String tricode;
+  final String triCode;
   final Position position;
   final String playerPhoto;
   final PlayerStats stats;
   final List<NbaTeams> nbaTeam;
+  final List<NbaGames> nbaGame;
 
-  GridTilePosition(
+  PlayerGridTile(
       {this.playerDetails,
       this.position,
       this.playerPhoto,
-      this.tricode,
+      this.triCode,
       this.stats,
-      this.nbaTeam});
+      this.nbaTeam,
+      this.nbaGame});
 
   getPlayerStats(String playerId) async {
     final response = await http.get(
@@ -187,42 +189,71 @@ class GridTilePosition extends StatelessWidget {
     }
   }
 
-  getBoxScore() async {
-//    https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json
+  Future<Stats> getBoxScore({String date, String gameId}) async {
+    String gameId = nbaGame[0].gameId;
+//    https://data.nba.net/data/10s/prod/v1/20191205/0021900316_boxscore.json
 //    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
-    final response = await http.get(
-        'https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
+    final response = await http.get('https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
     if (response.statusCode == 200) {
       final testBody = jsonDecode(response.body);
-      Hello okay = Hello.fromJson(testBody);
-//      print(okay.basicGameData.gameId);
-//      print(okay.stats.playerStats[0].points);
-//      print(okay.basicGameData);
-      return Hello.fromJson(testBody);
+//      print(testBody['basicGameData']);
+//      List<Hello> WTF = [];
+//      testBody.forEach((game) => WTF.add(Hello.fromJson(game)));
+      Stats okay = Stats.fromJson(testBody['stats']);
+      return okay;
+    }else {
+      throw Exception('Failed to load post');
     }
   }
-  Future<List<NbaGames>> getListOfGames() async {
-    var now = DateTime.now();
-    var format = DateFormat('yMdd');
-    var date = format.format(now);
-
+  Future<List<NbaGames>> getListOfGames(String date) async {
     final response = await http.get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
     final Map<String, dynamic> gameListJson = jsonDecode(response.body);
-    print(gameListJson);
     List<NbaGames> nbaGames = [];
-    gameListJson['games'].forEach((game) => nbaGames.add(game));
-//    print(nbaGames);
+    gameListJson['games'].forEach((game) => nbaGames.add(NbaGames.fromJson(game)));
     return nbaGames;
   }
 
   @override
   Widget build(BuildContext context) {
+    //grab all active players
+    var now = DateTime.now();
+    var format = DateFormat('yMdd');
+    var date = format.format(now);
     return FutureBuilder(
-        future: getListOfGames(),
+        future: getBoxScore(),
         builder: (context, snapshot) {
-          NbaGames nbaGames = snapshot.data;
-          print(nbaGames);
-          print(snapshot.data);
+          Stats nbaGame = snapshot.data;
+          List<PlayerStats> yup = nbaGame.playerStats;
+          print('PLAYERDETAILS : ${yup.indexWhere(( you) => you.personId == playerDetails.playerId )}');
+          print(playerDetails.playerId);
+          print(yup[14].personId);
+
+
+
+//          print(playerDetails.playerId);
+//          print(nbaGame.playerStats[14].personId);
+//          print(nbaGame.playerStats[14].teamId);
+
+//          print(nbaGame.playerStats.contains(playerDetails.teamId));
+
+
+
+//          print(nbaGame.playerStats[0].personId);
+//          print(nbaGame.playerStats[0].playerCode);
+
+
+
+//          print(okay.basicGameData.isGameActivated);
+//          print(nbaGame[1].gameId);
+//          print(date);
+//          Hello okay = snapshot.data;
+//          print(okay.basicGameData.startTimeEastern);
+
+//          print();
+//          print(okay.basicGameData.isGameActivated);
+//          List<NbaGames> nbaGames = snapshot.data;
+//          print(nbaGames[0].gameId);
+//          print(snapshot.data);
 //          Hello okay = snapshot.data;
 //          PlayerStats stats = okay.stats.playerStats.firstWhere(
 //              (player) => player.personId == playerDetails.playerId);
@@ -265,7 +296,7 @@ class GridTilePosition extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                            ' $tricode - ${playerDetails.position}\n',
+                            ' $triCode - ${playerDetails.position}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
                         style: TextStyle(fontSize: 12.0),
                       ),

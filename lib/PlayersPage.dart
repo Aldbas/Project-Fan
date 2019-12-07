@@ -16,7 +16,7 @@ class PlayerDetails {
    String teamId;
    String jerseyNumber;
    String position;
-   String teamTricode;
+   String teamTriCode;
 
   PlayerDetails({
     this.firstName,
@@ -25,7 +25,7 @@ class PlayerDetails {
     this.teamId,
     this.jerseyNumber,
     this.position,
-    this.teamTricode,
+    this.teamTriCode,
   });
 
   factory PlayerDetails.fromJson(Map<String, dynamic> json) {
@@ -49,11 +49,7 @@ Future<List<PlayerDetails>> loadPlayerList() async {
   playerListJson['league']['standard']
       .forEach((player) => players.add(PlayerDetails.fromJson(player)));
 //  players.removeWhere((player) => !player.isActive);
-  //Justin Anderson 1626147
 
-//  playerListJson
-//  print(playerListJson['league']['standard']);
-//  print(response.body);
   return players;
 }
 
