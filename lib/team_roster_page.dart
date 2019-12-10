@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import 'PlayersPage.dart';
 import 'home_page.dart';
+import 'model/game_boxscore.dart';
 import 'players_profile.dart';
 import 'playerTile.dart';
 
@@ -68,8 +69,12 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
    Future <List<NbaTeams>> nbaTeams;
    Future <List<PlayerDetails>> playerList;
    Future <List<NbaGames>> nbaGames;
+   Future<Stats> gameBoxScore;
+
+
    var now = DateTime.now();
    var format = DateFormat('yMdd');
+
 //   Future <dynamic> playerLog;
 
 //  _TeamRosterPageState({this.nbaTeams});
@@ -86,12 +91,19 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
   }
 
   Future<List<PlayerDetails>> loadPlayerList() async {
+//    final response = await http.get('https://data.nba.net/10s/prod/v1/2019/teams/thunder/roster.json');
     final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
 //  PlayerDetails.fromJson(json.decode(response.body));
     final Map<String, dynamic> playerListJson = jsonDecode(response.body);
+    print(playerListJson);
     List<PlayerDetails> players = [];
     playerListJson['league']['standard']
+//    ['players']
         .forEach((player) => players.add(PlayerDetails.fromJson(player)));
+    List<PlayerDetails> OKCPLAYERS = [];
+    OKCPLAYERS = players.where((PlayerDetails player) => player.teamId == '1610612760').toList();
+      return OKCPLAYERS;
+
 //  players.removeWhere((player) => !player.isActive);
 
     return players;
@@ -142,6 +154,22 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
       throw Exception('Failed to load');
     }
   }
+  Future<Stats> getBoxScore({String date, String gameId}) async {
+//    String gameId = nbaGame[0].gameId;
+//    https://data.nba.net/data/10s/prod/v1/20191205/0021900316_boxscore.json
+//    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
+    final response = await http.get('https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
+    if (response.statusCode == 200) {
+      final testBody = jsonDecode(response.body);
+//      print(testBody['basicGameData']);
+//      List<Hello> WTF = [];
+//      testBody.forEach((game) => WTF.add(Hello.fromJson(game)));
+      Stats okay = Stats.fromJson(testBody['stats']);
+      return okay;
+    }else {
+      throw Exception('Failed to load post');
+    }
+  }
 
   @override
   void initState()  {
@@ -152,6 +180,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     nbaGames = getListOfGames();
     nbaTeams = loadNbaTeams();
     playerList = loadPlayerList();
+    gameBoxScore = getBoxScore();
 
 //     playerLog = getPlayerStats();
   }
@@ -261,7 +290,9 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
              future: Future.wait([
                playerList,
                nbaTeams,
-               nbaGames
+               nbaGames,
+               gameBoxScore,
+
              ]),
               builder: (context, snapshot) {
                if(!snapshot.hasData) {
@@ -271,31 +302,39 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     padding: EdgeInsets.all(0.0),
                     itemCount: setPosition.length,
                     itemBuilder: (BuildContext context, int index) {
-                      PlayerDetails playerDetails = snapshot.data[0][index];
+                      List<PlayerDetails> playerDetails = snapshot.data[0];
+                      print(playerDetails[index].playerId);
                      List <NbaTeams> nbaTeam = snapshot.data[1];
                      List<NbaGames> nbaGame = snapshot.data[2];
+                     Stats gameBoxScore = snapshot.data[3];
+                     List<PlayerStats> wtf = gameBoxScore.playerStats;
+                     Iterable<PlayerStats> okay = wtf.where((test) => test.personId == playerDetails[index].playerId);
+                     print(wtf[index].personId);
+//                     PlayerStats okay = wtf.firstWhere((player) => player.personId == playerDetails[index].playerId);
+//                     print(okay);
 //                      print(okay[0].gameDateUTC.replaceAll('-', ''));
-                      NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails.teamId);
+                      NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails[index].teamId);
 //                      print(teams);
-                      String playerPhoto = getPlayerProfilePicture(playerDetails.playerId);
+                      String playerPhoto = getPlayerProfilePicture(playerDetails[index].playerId);
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
-                                      playerDetails: playerDetails,
-                                      nbaTeam: hello.fullName,
+                                      playerDetails: playerDetails[index],
+//                                      nbaTeam: hello.fullName,
                                       setPosition: setPosition[index],
                                       playerPhoto: playerPhoto)));
                         },
                         child: PlayerGridTile(
                           position: setPosition[index],
-                          playerDetails: playerDetails,
+                          playerDetails: playerDetails[index],
                           playerPhoto: playerPhoto,
                           triCode: hello.tricode?? '',
                           nbaTeam: nbaTeam,
                           nbaGame: nbaGame,
+//                          stats: ,
                         ),
                       );
                     });

@@ -219,35 +219,15 @@ class PlayerGridTile extends StatelessWidget {
     var now = DateTime.now();
     var format = DateFormat('yMdd');
     var date = format.format(now);
-    return FutureBuilder(
-        future: getBoxScore(),
-        builder: (context, snapshot) {
-          Stats nbaGame = snapshot.data;
-          List<PlayerStats> yup = nbaGame.playerStats;
-          print('PLAYERDETAILS : ${yup.indexWhere(( you) => you.personId == playerDetails.playerId )}');
-          print(playerDetails.playerId);
-          print(yup[14].personId);
-
-
-
-//          print(playerDetails.playerId);
-//          print(nbaGame.playerStats[14].personId);
-//          print(nbaGame.playerStats[14].teamId);
-
-//          print(nbaGame.playerStats.contains(playerDetails.teamId));
-
-
-
-//          print(nbaGame.playerStats[0].personId);
-//          print(nbaGame.playerStats[0].playerCode);
-
-
-
-//          print(okay.basicGameData.isGameActivated);
-//          print(nbaGame[1].gameId);
-//          print(date);
-//          Hello okay = snapshot.data;
-//          print(okay.basicGameData.startTimeEastern);
+    return
+//      FutureBuilder(
+//        future: getBoxScore(),
+//        builder: (context, snapshot) {
+//          Stats nbaGame = snapshot.data;
+//          List<PlayerStats> yup = nbaGame.playerStats;
+//          print('PLAYERDETAILS : ${yup.firstWhere(( you) => you.personId == playerDetails.playerId )}');
+//          PlayerStats stats = yup.firstWhere(( you) => you.personId == playerDetails.playerId );
+//          print(stats.personId);
 
 //          print();
 //          print(okay.basicGameData.isGameActivated);
@@ -273,7 +253,7 @@ class PlayerGridTile extends StatelessWidget {
 //           NbaTeams game = nbaTeam.firstWhere((team) => team.teamId == (!homeGame? yes[0].hTeam.teamId : yes[0].vTeam.teamId));
 //           String game = nbaTeam[0].teamId == yes[0].vTeam.teamId? 'hello' : 'NOPE';
 //           print(playerDetails.playerId);
-          return Padding(
+           Padding(
             padding: const EdgeInsets.all(1.0),
             child: Container(
               color: Colors
@@ -295,6 +275,7 @@ class PlayerGridTile extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
+//                        playerDetails.playerId,
                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
                             ' $triCode - ${playerDetails.position}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
@@ -306,23 +287,23 @@ class PlayerGridTile extends StatelessWidget {
                 footer: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-//                    buildText('${stats.fga}/ ${stats.fgm}', color: Colors.red), // FGM/A
-//                    buildText('${stats.fgp}%'), //FG%
-//                    buildText('${stats.ftm}/${stats.fta}'), //FTM/A
-//                    buildText('${stats.ftp}%'),//FT%
-//                    buildText('${stats.tpm}'),//3PTM
-//                    buildText('${stats.points}'),//points
-//                    buildText('${stats.totReb}'),//total rebounds
-//                    buildText('${stats.assists}'), //assists
-//                    buildText('${stats.steals}'),//steals
-//                    buildText('${stats.blocks}'),
-//                    buildText('${stats.turnovers}'),
+                    buildText('${stats.personId}/ ${stats.fga}', color: Colors.red), // FGM/A
+                    buildText('${stats.fgp}%'), //FG%
+                    buildText('${stats.ftm}/${stats.fta}'), //FTM/A
+                    buildText('${stats.ftp}%'),//FT%
+                    buildText('${stats.tpm}'),//3PTM
+                    buildText('${stats.points}'),//points
+                    buildText('${stats.totReb}'),//total rebounds
+                    buildText('${stats.assists}'), //assists
+                    buildText('${stats.steals}'),//steals
+                    buildText('${stats.blocks}'),
+                    buildText('${stats.turnovers}'),
                   ],
                 ),
               ),
             ),
           );
-        });
+//        });
   }
 
   Widget buildText(String text, {Color color}) {
