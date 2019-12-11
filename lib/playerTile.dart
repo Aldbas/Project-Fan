@@ -31,6 +31,7 @@ List<Position> setPosition = [
   Position(name: 'BN'),
   Position(name: 'BN'),
   Position(name: 'BN'),
+  Position(name: 'WTF')
 ];
 
 class Categories {
@@ -158,17 +159,19 @@ class Categories {
 //}
 
 class PlayerGridTile extends StatelessWidget {
-  final PlayerDetails playerDetails;
+  final PlayerStats playerDetails;
   final String triCode;
   final Position position;
   final String playerPhoto;
   final PlayerStats stats;
   final List<NbaTeams> nbaTeam;
   final List<NbaGames> nbaGame;
+  final int index;
 
   PlayerGridTile(
       {this.playerDetails,
       this.position,
+        this.index,
       this.playerPhoto,
       this.triCode,
       this.stats,
@@ -264,7 +267,7 @@ class PlayerGridTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     CircleAvatar(
-                        child: Text(position.name),
+                        child: Text('$index'),
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.transparent),
                     CircleAvatar(
@@ -277,7 +280,7 @@ class PlayerGridTile extends StatelessWidget {
                       child: Text(
 //                        playerDetails.playerId,
                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                            ' $triCode - ${playerDetails.position}\n',
+                            ' $triCode - ${playerDetails.pos}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
                         style: TextStyle(fontSize: 12.0),
                       ),
@@ -287,7 +290,7 @@ class PlayerGridTile extends StatelessWidget {
                 footer: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    buildText('${stats.personId}/ ${stats.fga}', color: Colors.red), // FGM/A
+                    buildText('${stats.fgm}/ ${stats.fga}', color: Colors.red), // FGM/A
                     buildText('${stats.fgp}%'), //FG%
                     buildText('${stats.ftm}/${stats.fta}'), //FTM/A
                     buildText('${stats.ftp}%'),//FT%

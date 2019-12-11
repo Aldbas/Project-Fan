@@ -95,7 +95,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
 //  PlayerDetails.fromJson(json.decode(response.body));
     final Map<String, dynamic> playerListJson = jsonDecode(response.body);
-    print(playerListJson);
+//    print(playerListJson);
     List<PlayerDetails> players = [];
     playerListJson['league']['standard']
 //    ['players']
@@ -136,7 +136,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 
       List<PlayerGameLog> playerLog = [];
       gameLogJson['leageue']['standard'].forEach((gameLog) => playerLog.add(gameLog));
-      print(playerLog);
+//      print(playerLog);
       return playerLog;
     }
   }
@@ -295,46 +295,68 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 
              ]),
               builder: (context, snapshot) {
+                List <PlayerDetails> playerDetails = snapshot.data[0];
+                List <NbaTeams> nbaTeam = snapshot.data[1];
+                List <NbaGames> nbaGame = snapshot.data[2];
+                Stats gameBoxScore = snapshot.data[3];
+                List <PlayerStats> skodfkla= gameBoxScore.playerStats;
+
                if(!snapshot.hasData) {
                  return Container();
                }
                 return ListView.builder(
                     padding: EdgeInsets.all(0.0),
-                    itemCount: setPosition.length,
+                    itemCount: skodfkla.length,
                     itemBuilder: (BuildContext context, int index) {
-                      List<PlayerDetails> playerDetails = snapshot.data[0];
-                      print(playerDetails[index].playerId);
-                     List <NbaTeams> nbaTeam = snapshot.data[1];
-                     List<NbaGames> nbaGame = snapshot.data[2];
-                     Stats gameBoxScore = snapshot.data[3];
-                     List<PlayerStats> wtf = gameBoxScore.playerStats;
-                     Iterable<PlayerStats> okay = wtf.where((test) => test.personId == playerDetails[index].playerId);
-                     print(wtf[index].personId);
+//                    print(playerDetails[index].playerId);
+                     List<PlayerStats> wtf = [];
+                     skodfkla.removeWhere((PlayerStats player) => player.teamId != '1610612760');
+                     skodfkla.sort((a, b) => int.parse(b.points).compareTo( int.parse(a.points)));
+                     print(skodfkla[index].lastName);
+//                     print(gameBoxScore.playerStats[index].personId);
+//                     print('HELLO : $wtf');
+//                     print(wtf[index].personId);
+//                     print(wtf.length);
+//                     print(playerDetails[index].firstName + playerDetails[index].lastName);
+//                     print(wtf[index].firstName + wtf[index].lastName);
+
+//                     print('${wtf[index].lastName} ${wtf[index].personId}' + ':' '${playerDetails[index].playerId}');
+//                     print(playerDetails[index].playerId);
+//                     Iterable<PlayerStats> okay = wtf.where((test) => test.personId == playerDetails[index].playerId);
+//                      PlayerStats FIXME = wtf.firstWhere((player) => player.personId == playerDetails[index].playerId);
+//                      print(FIXME);
+//                     print(wtf[index].personId);
 //                     PlayerStats okay = wtf.firstWhere((player) => player.personId == playerDetails[index].playerId);
 //                     print(okay);
 //                      print(okay[0].gameDateUTC.replaceAll('-', ''));
                       NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails[index].teamId);
-//                      print(teams);
-                      String playerPhoto = getPlayerProfilePicture(playerDetails[index].playerId);
+//                      PlayerStats workPlz = skodfkla.singleWhere((player) => player.personId == playerDetails[index].playerId);
+//                      bool wtfpsldpfla = skodfkla.contains(playerDetails[index].playerId);
+                      String playerPhoto = getPlayerProfilePicture(skodfkla[index].personId);
+//                      print(skodfkla[index].personId);
+//                      print('gameSCORElist:$index/${skodfkla.length} ${skodfkla[index].firstName} ${skodfkla[index].lastName}');
+//                      print('playerDetailsList:$index/${playerDetails.length} ${playerDetails[index].firstName} ${playerDetails[index].lastName} ');
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
-                                      playerDetails: playerDetails[index],
+//                                      playerDetails: skodfkla[index],
 //                                      nbaTeam: hello.fullName,
-                                      setPosition: setPosition[index],
+//                                      setPosition: setPosition[index],
                                       playerPhoto: playerPhoto)));
                         },
                         child: PlayerGridTile(
-                          position: setPosition[index],
-                          playerDetails: playerDetails[index],
+                          index: index,
+//                          position: setPosition[index],
+                          playerDetails: skodfkla[index],
                           playerPhoto: playerPhoto,
                           triCode: hello.tricode?? '',
                           nbaTeam: nbaTeam,
                           nbaGame: nbaGame,
-//                          stats: ,
+                          stats: skodfkla[index],
                         ),
                       );
                     });
