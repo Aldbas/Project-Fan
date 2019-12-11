@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_fan/model/nba_games.dart';
 import 'package:project_fan/model/playerGameLog.dart';
+import 'package:project_fan/model/playerGameLog.dart' as prefix0;
 import 'package:project_fan/model/today_game_scoreboard.dart';
 import 'package:project_fan/nbaTeams.dart';
 import 'package:intl/intl.dart';
@@ -309,30 +310,27 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     itemCount: skodfkla.length,
                     itemBuilder: (BuildContext context, int index) {
 //                    print(playerDetails[index].playerId);
-                     List<PlayerStats> wtf = [];
                      skodfkla.removeWhere((PlayerStats player) => player.teamId != '1610612760');
-                     skodfkla.sort((a, b) => int.parse(b.points).compareTo( int.parse(a.points)));
-                     print(skodfkla[index].lastName);
-//                     print(gameBoxScore.playerStats[index].personId);
-//                     print('HELLO : $wtf');
-//                     print(wtf[index].personId);
-//                     print(wtf.length);
-//                     print(playerDetails[index].firstName + playerDetails[index].lastName);
-//                     print(wtf[index].firstName + wtf[index].lastName);
+//                      print(playerDetails[index].playerId);
+                      print('$index ${skodfkla[index].personId}');
 
-//                     print('${wtf[index].lastName} ${wtf[index].personId}' + ':' '${playerDetails[index].playerId}');
-//                     print(playerDetails[index].playerId);
-//                     Iterable<PlayerStats> okay = wtf.where((test) => test.personId == playerDetails[index].playerId);
-//                      PlayerStats FIXME = wtf.firstWhere((player) => player.personId == playerDetails[index].playerId);
-//                      print(FIXME);
-//                     print(wtf[index].personId);
-//                     PlayerStats okay = wtf.firstWhere((player) => player.personId == playerDetails[index].playerId);
-//                     print(okay);
-//                      print(okay[0].gameDateUTC.replaceAll('-', ''));
+//                     skodfkla.sort((a, b) => int.parse(b.points).compareTo( int.parse(a.points)));
+                      skodfkla.sort((a, b) => a.lastName.compareTo(b.lastName));
+//                      skodfkla.removeWhere((PlayerStats player) => player.personId != playerDetails[index].playerId);
+
+//                      print(playerDetails.length);
+//                      print(playerDetails[index].lastName);
+//                      print(skodfkla.length);
                       NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails[index].teamId);
-//                      PlayerStats workPlz = skodfkla.singleWhere((player) => player.personId == playerDetails[index].playerId);
-//                      bool wtfpsldpfla = skodfkla.contains(playerDetails[index].playerId);
-                      String playerPhoto = getPlayerProfilePicture(skodfkla[index].personId);
+
+//                      print(skodfkla[3].personId);
+//                      print(playerDetails[3].firstName);
+//                      PlayerStats player = skodfkla.firstWhere((player) => player.firstName == playerDetails[index].firstName);
+                      PlayerStats player = skodfkla.singleWhere((player) => player.personId == playerDetails[index].personId, orElse: () => null);
+//                      print(player.firstName + player.lastName);
+//                      PlayerStats workPlz = skodfkla.singleWhere((player) => player.personId == playerDetails[index].personId);
+//                      bool wtfpsldpfla = skodfkla.contains(playerDetails[index].personId);
+                      String playerPhoto = getPlayerProfilePicture(playerDetails[index].personId);
 //                      print(skodfkla[index].personId);
 //                      print('gameSCORElist:$index/${skodfkla.length} ${skodfkla[index].firstName} ${skodfkla[index].lastName}');
 //                      print('playerDetailsList:$index/${playerDetails.length} ${playerDetails[index].firstName} ${playerDetails[index].lastName} ');
@@ -343,7 +341,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
-//                                      playerDetails: skodfkla[index],
+//                                      playerDetails: PlayerDetails[index],
 //                                      nbaTeam: hello.fullName,
 //                                      setPosition: setPosition[index],
                                       playerPhoto: playerPhoto)));
@@ -351,7 +349,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                         child: PlayerGridTile(
                           index: index,
 //                          position: setPosition[index],
-                          playerDetails: skodfkla[index],
+                          playerDetails: playerDetails[index],
                           playerPhoto: playerPhoto,
                           triCode: hello.tricode?? '',
                           nbaTeam: nbaTeam,

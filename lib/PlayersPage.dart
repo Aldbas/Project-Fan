@@ -12,7 +12,7 @@ import 'home_page.dart';
 class PlayerDetails {
    String firstName;
    String lastName;
-   String playerId;
+   String personId;
    String teamId;
    String jerseyNumber;
    String position;
@@ -21,7 +21,7 @@ class PlayerDetails {
   PlayerDetails({
     this.firstName,
     this.lastName,
-    this.playerId,
+    this.personId,
     this.teamId,
     this.jerseyNumber,
     this.position,
@@ -32,7 +32,7 @@ class PlayerDetails {
     return PlayerDetails(
       firstName: json['firstName'],
       lastName: json['lastName'],
-      playerId: json['personId'],
+      personId: json['personId'],
       teamId: json['teamId'],
       jerseyNumber: json['jersey'],
       position: json['pos'],
@@ -309,7 +309,7 @@ class _PlayersPageState extends State<PlayersPage> {
                                       snapshot.data[index];
                                   final String playerProfilePhoto =
                                       getPlayerProfilePicture(
-                                          playerDetails.playerId);
+                                          playerDetails.personId);
 
                                   return Row(
                                     mainAxisAlignment:
@@ -324,7 +324,7 @@ class _PlayersPageState extends State<PlayersPage> {
                                       Text(playerDetails.lastName),
                                       Text(playerDetails.jerseyNumber),
                                       Text(playerDetails.position),
-                                      Text(playerDetails.playerId),
+                                      Text(playerDetails.personId),
 //                                    Text('teamId: ${playerDetails.teamId}'),
                                     ],
                                   );

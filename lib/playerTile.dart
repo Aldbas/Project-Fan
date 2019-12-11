@@ -159,7 +159,7 @@ class Categories {
 //}
 
 class PlayerGridTile extends StatelessWidget {
-  final PlayerStats playerDetails;
+  final PlayerDetails playerDetails;
   final String triCode;
   final Position position;
   final String playerPhoto;
@@ -280,7 +280,7 @@ class PlayerGridTile extends StatelessWidget {
                       child: Text(
 //                        playerDetails.playerId,
                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                            ' $triCode - ${playerDetails.pos}\n',
+                            ' $triCode - ${playerDetails.position}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
                         style: TextStyle(fontSize: 12.0),
                       ),
