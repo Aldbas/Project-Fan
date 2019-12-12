@@ -159,7 +159,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 //    String gameId = nbaGame[0].gameId;
 //    https://data.nba.net/data/10s/prod/v1/20191205/0021900316_boxscore.json
 //    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
-    final response = await http.get('https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
+    final response = await http.get('https://data.nba.net/data/10s/prod/v1/20191209/0021900350_boxscore.json');
     if (response.statusCode == 200) {
       final testBody = jsonDecode(response.body);
 //      print(testBody['basicGameData']);
@@ -300,7 +300,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                 List <NbaTeams> nbaTeam = snapshot.data[1];
                 List <NbaGames> nbaGame = snapshot.data[2];
                 Stats gameBoxScore = snapshot.data[3];
-                List <PlayerStats> skodfkla= gameBoxScore.playerStats;
+                List <PlayerStats> skodfkla = gameBoxScore.playerStats;
 
                if(!snapshot.hasData) {
                  return Container();
@@ -309,13 +309,21 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                     padding: EdgeInsets.all(0.0),
                     itemCount: skodfkla.length,
                     itemBuilder: (BuildContext context, int index) {
+                      List<String> teamRoster= [
+
+                      ];
 //                    print(playerDetails[index].playerId);
                      skodfkla.removeWhere((PlayerStats player) => player.teamId != '1610612760');
 //                      print(playerDetails[index].playerId);
-                      print('$index ${skodfkla[index].personId}');
+//                      print('$index ${skodfkla[index].personId}');
 
-//                     skodfkla.sort((a, b) => int.parse(b.points).compareTo( int.parse(a.points)));
-                      skodfkla.sort((a, b) => a.lastName.compareTo(b.lastName));
+
+//                    newList = skodfkla.where((player) => player.personId == playerDetails[index].personId).toList();
+                    print(skodfkla.length);
+
+                    skodfkla.sort((b, a) => a.fga.compareTo(b.fga));
+//                     skodfkla.sort((a, b) => int.parse(a.points).compareTo(int.parse(b.points)));
+//                      skodfkla.sort((a, b) => a.lastName.compareTo(b.lastName));
 //                      skodfkla.removeWhere((PlayerStats player) => player.personId != playerDetails[index].playerId);
 
 //                      print(playerDetails.length);
@@ -330,7 +338,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 //                      print(player.firstName + player.lastName);
 //                      PlayerStats workPlz = skodfkla.singleWhere((player) => player.personId == playerDetails[index].personId);
 //                      bool wtfpsldpfla = skodfkla.contains(playerDetails[index].personId);
-                      String playerPhoto = getPlayerProfilePicture(playerDetails[index].personId);
+                      String playerPhoto = getPlayerProfilePicture(skodfkla[index].personId);
 //                      print(skodfkla[index].personId);
 //                      print('gameSCORElist:$index/${skodfkla.length} ${skodfkla[index].firstName} ${skodfkla[index].lastName}');
 //                      print('playerDetailsList:$index/${playerDetails.length} ${playerDetails[index].firstName} ${playerDetails[index].lastName} ');
@@ -349,7 +357,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                         child: PlayerGridTile(
                           index: index,
 //                          position: setPosition[index],
-                          playerDetails: playerDetails[index],
+                          playerDetails: skodfkla[index],
                           playerPhoto: playerPhoto,
                           triCode: hello.tricode?? '',
                           nbaTeam: nbaTeam,

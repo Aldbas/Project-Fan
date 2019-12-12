@@ -15,7 +15,7 @@ class PlayerDetails {
    String personId;
    String teamId;
    String jerseyNumber;
-   String position;
+   String pos;
    String teamTriCode;
 
   PlayerDetails({
@@ -24,7 +24,7 @@ class PlayerDetails {
     this.personId,
     this.teamId,
     this.jerseyNumber,
-    this.position,
+    this.pos,
     this.teamTriCode,
   });
 
@@ -35,7 +35,7 @@ class PlayerDetails {
       personId: json['personId'],
       teamId: json['teamId'],
       jerseyNumber: json['jersey'],
-      position: json['pos'],
+      pos: json['pos'],
     );
   }
 }
@@ -323,7 +323,7 @@ class _PlayersPageState extends State<PlayersPage> {
                                       Text(playerDetails.firstName),
                                       Text(playerDetails.lastName),
                                       Text(playerDetails.jerseyNumber),
-                                      Text(playerDetails.position),
+                                      Text(playerDetails.pos),
                                       Text(playerDetails.personId),
 //                                    Text('teamId: ${playerDetails.teamId}'),
                                     ],

@@ -72,6 +72,7 @@ class PlayerStats {
   String turnovers;
   String blocks;
   String plusMinus;
+  String dnp;
 
   PlayerStats ({
     this.personId,
@@ -103,6 +104,7 @@ class PlayerStats {
     this.turnovers,
     this.blocks,
     this.plusMinus,
+    this.dnp
 });
 
   factory PlayerStats.fromJson(Map<String, dynamic> json) => PlayerStats(
@@ -135,5 +137,6 @@ class PlayerStats {
     turnovers: json["turnovers"],
     blocks: json["blocks"],
     plusMinus: json["plusMinus"],
+    dnp: json["dnp"]
   );
 }

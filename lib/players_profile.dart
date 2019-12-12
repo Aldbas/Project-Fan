@@ -40,7 +40,7 @@ class DetailsScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 20.0, color: Colors.white),
                       ),
                       Text(
-                        '${playerDetails.position} - $nbaTeam - ${playerDetails.jerseyNumber}',
+                        '${playerDetails.pos} - $nbaTeam - ${playerDetails.jerseyNumber}',
                         style: TextStyle(color: Colors.white),
                       ),
                       Text(

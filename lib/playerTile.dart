@@ -159,7 +159,7 @@ class Categories {
 //}
 
 class PlayerGridTile extends StatelessWidget {
-  final PlayerDetails playerDetails;
+  final PlayerStats playerDetails;
   final String triCode;
   final Position position;
   final String playerPhoto;
@@ -280,29 +280,29 @@ class PlayerGridTile extends StatelessWidget {
                       child: Text(
 //                        playerDetails.playerId,
                         '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                            ' $triCode - ${playerDetails.position}\n',
+                            ' $triCode - ${playerDetails.pos}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
                         style: TextStyle(fontSize: 12.0),
                       ),
                     )
                   ],
                 ),
-                footer: Row(
+                footer: stats.dnp.isNotEmpty ? Center(child: buildText(stats.dnp)) : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     buildText('${stats.fgm}/ ${stats.fga}', color: Colors.red), // FGM/A
                     buildText('${stats.fgp}%'), //FG%
                     buildText('${stats.ftm}/${stats.fta}'), //FTM/A
                     buildText('${stats.ftp}%'),//FT%
-                    buildText('${stats.tpm}'),//3PTM
-                    buildText('${stats.points}'),//points
-                    buildText('${stats.totReb}'),//total rebounds
-                    buildText('${stats.assists}'), //assists
-                    buildText('${stats.steals}'),//steals
-                    buildText('${stats.blocks}'),
-                    buildText('${stats.turnovers}'),
+                    buildText(stats.tpm),//3PTM
+                    buildText(stats.points),//points
+                    buildText(stats.totReb),//total rebounds
+                    buildText(stats.assists), //assists
+                    buildText(stats.steals),//steals
+                    buildText(stats.blocks),
+                    buildText(stats.turnovers),
                   ],
-                ),
+                ) ,
               ),
             ),
           );
