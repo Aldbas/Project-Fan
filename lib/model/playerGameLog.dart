@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 class PlayerGameLog {
   String gameId;
   String gameDateUTC;
@@ -42,7 +44,7 @@ class Team {
   );
 }
 
-class PlayerStats {
+class PlayerStats extends Equatable{
   String personId;
   String firstName;
   String lastName;
@@ -106,6 +108,8 @@ class PlayerStats {
     this.plusMinus,
     this.dnp
 });
+  @override
+  List<Object> get props =>[personId];
 
   factory PlayerStats.fromJson(Map<String, dynamic> json) => PlayerStats(
     personId: json["personId"],

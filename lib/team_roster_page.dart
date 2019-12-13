@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:collection/collection.dart';
 import 'package:project_fan/model/nba_games.dart';
 import 'package:project_fan/model/playerGameLog.dart';
-import 'package:project_fan/model/playerGameLog.dart' as prefix0;
 import 'package:project_fan/model/today_game_scoreboard.dart';
 import 'package:project_fan/nbaTeams.dart';
 import 'package:intl/intl.dart';
@@ -68,7 +68,7 @@ class TeamRosterPage extends StatefulWidget {
 
 class _TeamRosterPageState extends State<TeamRosterPage> {
    Future <List<NbaTeams>> nbaTeams;
-   Future <List<PlayerDetails>> playerList;
+   Future <List<PlayerStats>> playerList;
    Future <List<NbaGames>> nbaGames;
    Future<Stats> gameBoxScore;
 
@@ -91,18 +91,18 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     return nbaGames;
   }
 
-  Future<List<PlayerDetails>> loadPlayerList() async {
+  Future<List<PlayerStats>> loadPlayerList() async {
 //    final response = await http.get('https://data.nba.net/10s/prod/v1/2019/teams/thunder/roster.json');
     final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
 //  PlayerDetails.fromJson(json.decode(response.body));
     final Map<String, dynamic> playerListJson = jsonDecode(response.body);
 //    print(playerListJson);
-    List<PlayerDetails> players = [];
+    List<PlayerStats> players = [];
     playerListJson['league']['standard']
 //    ['players']
-        .forEach((player) => players.add(PlayerDetails.fromJson(player)));
-    List<PlayerDetails> OKCPLAYERS = [];
-    OKCPLAYERS = players.where((PlayerDetails player) => player.teamId == '1610612760').toList();
+        .forEach((player) => players.add(PlayerStats.fromJson(player)));
+    List<PlayerStats> OKCPLAYERS = [];
+    OKCPLAYERS = players.where((PlayerStats player) => player.teamId == '1610612760').toList();
       return OKCPLAYERS;
 
 //  players.removeWhere((player) => !player.isActive);
@@ -175,14 +175,12 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
   @override
   void initState()  {
     super.initState();
-//    sort = false;
     selectedCategories = [];
     categories = Categories.getCat();
+    playerList = loadPlayerList();
     nbaGames = getListOfGames();
     nbaTeams = loadNbaTeams();
-    playerList = loadPlayerList();
     gameBoxScore = getBoxScore();
-
 //     playerLog = getPlayerStats();
   }
 
@@ -191,10 +189,6 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
     var now = DateTime.now();
     var format = DateFormat('E, MMM dd');
     var date = format.format(now);
-
-//    print('player:$nbaGames');
-//    print(nbaTeams);
-//    print(playerList);
 
     List<Widget> widgets = testCat
         .map((testCat) => Text(testCat,
@@ -296,53 +290,29 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
 
              ]),
               builder: (context, snapshot) {
-                List <PlayerDetails> playerDetails = snapshot.data[0];
+                List <PlayerStats> playerDetails = snapshot.data[0];
                 List <NbaTeams> nbaTeam = snapshot.data[1];
                 List <NbaGames> nbaGame = snapshot.data[2];
                 Stats gameBoxScore = snapshot.data[3];
                 List <PlayerStats> skodfkla = gameBoxScore.playerStats;
-
+                List<String> rosterPlayerIds= [ '1628983','101108', '203500', '1628983','203457', '1626220', '203497'];
+                List<String> playerIDs = [];
+                List<PlayerStats> playersTeam = [];
                if(!snapshot.hasData) {
                  return Container();
                }
                 return ListView.builder(
                     padding: EdgeInsets.all(0.0),
-                    itemCount: skodfkla.length,
+                    itemCount: 13,
                     itemBuilder: (BuildContext context, int index) {
-                      List<String> teamRoster= [
+//                      playerIDs.add(playerDetails)
+//                      playersTeam.add(skodfkla.singleWhere((player) => player.personId == rosterPlayerIds[index])); // works
+//                      playersTeam.add(skodfkla.firstWhere((player) => player.personId == gameBoxScore.playerStats[index].personId)); // works
+                        playersTeam.add(gameBoxScore.playerStats.firstWhere((player) => player.personId == playerDetails[index].personId, orElse: () => null));
+                      print(playersTeam.length);
 
-                      ];
-//                    print(playerDetails[index].playerId);
-                     skodfkla.removeWhere((PlayerStats player) => player.teamId != '1610612760');
-//                      print(playerDetails[index].playerId);
-//                      print('$index ${skodfkla[index].personId}');
-
-
-//                    newList = skodfkla.where((player) => player.personId == playerDetails[index].personId).toList();
-                    print(skodfkla.length);
-
-                    skodfkla.sort((b, a) => a.fga.compareTo(b.fga));
-//                     skodfkla.sort((a, b) => int.parse(a.points).compareTo(int.parse(b.points)));
-//                      skodfkla.sort((a, b) => a.lastName.compareTo(b.lastName));
-//                      skodfkla.removeWhere((PlayerStats player) => player.personId != playerDetails[index].playerId);
-
-//                      print(playerDetails.length);
-//                      print(playerDetails[index].lastName);
-//                      print(skodfkla.length);
                       NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == playerDetails[index].teamId);
-
-//                      print(skodfkla[3].personId);
-//                      print(playerDetails[3].firstName);
-//                      PlayerStats player = skodfkla.firstWhere((player) => player.firstName == playerDetails[index].firstName);
-                      PlayerStats player = skodfkla.singleWhere((player) => player.personId == playerDetails[index].personId, orElse: () => null);
-//                      print(player.firstName + player.lastName);
-//                      PlayerStats workPlz = skodfkla.singleWhere((player) => player.personId == playerDetails[index].personId);
-//                      bool wtfpsldpfla = skodfkla.contains(playerDetails[index].personId);
                       String playerPhoto = getPlayerProfilePicture(skodfkla[index].personId);
-//                      print(skodfkla[index].personId);
-//                      print('gameSCORElist:$index/${skodfkla.length} ${skodfkla[index].firstName} ${skodfkla[index].lastName}');
-//                      print('playerDetailsList:$index/${playerDetails.length} ${playerDetails[index].firstName} ${playerDetails[index].lastName} ');
-
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -357,12 +327,11 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                         child: PlayerGridTile(
                           index: index,
 //                          position: setPosition[index],
-                          playerDetails: skodfkla[index],
+                          playerDetails: playersTeam[index],
                           playerPhoto: playerPhoto,
                           triCode: hello.tricode?? '',
                           nbaTeam: nbaTeam,
                           nbaGame: nbaGame,
-                          stats: skodfkla[index],
                         ),
                       );
                     });

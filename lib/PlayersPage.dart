@@ -3,20 +3,21 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:json_table/json_table.dart';
 import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:project_fan/nbaTeams.dart';
 import 'package:project_fan/test.dart';
 
 import 'home_page.dart';
 
-class PlayerDetails {
-   String firstName;
-   String lastName;
-   String personId;
-   String teamId;
-   String jerseyNumber;
-   String pos;
-   String teamTriCode;
+class PlayerDetails extends Equatable{
+   final String firstName;
+   final String lastName;
+   final String personId;
+   final String teamId;
+   final String jerseyNumber;
+   final String pos;
+   final String teamTriCode;
 
   PlayerDetails({
     this.firstName,
@@ -28,6 +29,9 @@ class PlayerDetails {
     this.teamTriCode,
   });
 
+  @override
+  List<Object> get props =>[personId];
+
   factory PlayerDetails.fromJson(Map<String, dynamic> json) {
     return PlayerDetails(
       firstName: json['firstName'],
@@ -38,6 +42,7 @@ class PlayerDetails {
       pos: json['pos'],
     );
   }
+
 }
 
 Future<List<PlayerDetails>> loadPlayerList() async {
