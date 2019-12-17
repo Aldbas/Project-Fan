@@ -45,38 +45,38 @@ class Team {
 }
 
 class PlayerStats extends Equatable{
-  String personId;
-  String firstName;
-  String lastName;
-  String jersey;
-  String teamId;
-  bool isOnCourt;
-  String points;
-  String pos;
-  String positionFull;
-  String playerCode;
-  String min;
-  String fgm;
-  String fga;
-  String fgp;
-  String ftm;
-  String fta;
-  String ftp;
-  String tpm;
-  String tpa;
-  String tpp;
-  String offReb;
-  String defReb;
-  String totReb;
-  String assists;
-  String pFouls;
-  String steals;
-  String turnovers;
-  String blocks;
-  String plusMinus;
-  String dnp;
+  final String personId;
+  final String firstName;
+  final String lastName;
+  final String jersey;
+  final String teamId;
+  final bool isOnCourt;
+  final String points;
+  final String pos;
+  final String positionFull;
+  final String playerCode;
+  final String min;
+  final String fgm;
+  final String fga;
+  final String fgp;
+  final String ftm;
+  final String fta;
+  final String ftp;
+  final String tpm;
+  final String tpa;
+  final String tpp;
+  final String offReb;
+  final String defReb;
+  final String totReb;
+  final String assists;
+  final String pFouls;
+  final String steals;
+  final String turnovers;
+  final String blocks;
+  final String plusMinus;
+  final String dnp;
 
-  PlayerStats ({
+  PlayerStats (
     this.personId,
     this.firstName,
     this.lastName,
@@ -107,40 +107,40 @@ class PlayerStats extends Equatable{
     this.blocks,
     this.plusMinus,
     this.dnp
-});
+);
   @override
-  List<Object> get props =>[personId];
+  List<Object> get props =>[personId,firstName,lastName,teamId];
 
   factory PlayerStats.fromJson(Map<String, dynamic> json) => PlayerStats(
-    personId: json["personId"],
-    firstName: json["firstName"],
-    lastName: json["lastName"],
-    jersey: json["jersey"],
-    teamId: json["teamId"],
-    isOnCourt: json["isOnCourt"],
-    points: json["points"],
-    pos: json["pos"],
-    positionFull: json["position_full"],
-    playerCode: json["player_code"],
-    min: json["min"],
-    fgm: json["fgm"],
-    fga: json["fga"],
-    fgp: json["fgp"],
-    ftm: json["ftm"],
-    fta: json["fta"],
-    ftp: json["ftp"],
-    tpm: json["tpm"],
-    tpa: json["tpa"],
-    tpp: json["tpp"],
-    offReb: json["offReb"],
-    defReb: json["defReb"],
-    totReb: json["totReb"],
-    assists: json["assists"],
-    pFouls: json["pFouls"],
-    steals: json["steals"],
-    turnovers: json["turnovers"],
-    blocks: json["blocks"],
-    plusMinus: json["plusMinus"],
-    dnp: json["dnp"]
+     json["personId"],
+     json["firstName"],
+     json["lastName"],
+     json["jersey"],
+     json["teamId"],
+     json["isOnCourt"],
+     json["points"],
+     json["pos"],
+     json["position_full"],
+     json["player_code"],
+     json["min"],
+     json["fgm"],
+     json["fga"],
+     json["fgp"],
+     json["ftm"],
+     json["fta"],
+     json["ftp"],
+     json["tpm"],
+     json["tpa"],
+     json["tpp"],
+     json["offReb"],
+     json["defReb"],
+     json["totReb"],
+     json["assists"],
+     json["pFouls"],
+     json["steals"],
+     json["turnovers"],
+     json["blocks"],
+     json["plusMinus"],
+     json["dnp"]
   );
 }

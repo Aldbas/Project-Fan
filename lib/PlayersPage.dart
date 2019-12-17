@@ -17,29 +17,26 @@ class PlayerDetails extends Equatable{
    final String teamId;
    final String jerseyNumber;
    final String pos;
-   final String teamTriCode;
 
-  PlayerDetails({
+  PlayerDetails(
     this.firstName,
     this.lastName,
     this.personId,
     this.teamId,
     this.jerseyNumber,
     this.pos,
-    this.teamTriCode,
-  });
+  );
 
   @override
-  List<Object> get props =>[personId];
+  List<Object> get props =>[personId,firstName,lastName,teamId,pos];
 
   factory PlayerDetails.fromJson(Map<String, dynamic> json) {
-    return PlayerDetails(
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      personId: json['personId'],
-      teamId: json['teamId'],
-      jerseyNumber: json['jersey'],
-      pos: json['pos'],
+    return PlayerDetails(json['firstName'],
+json['lastName'],
+      json['personId'],
+      json['teamId'],
+  json['jersey'],
+ json['pos'],
     );
   }
 
