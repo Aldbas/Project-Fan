@@ -8,6 +8,7 @@ import 'package:project_fan/model/playerGameLog.dart';
 import 'package:project_fan/model/today_game_scoreboard.dart';
 import 'package:project_fan/nbaTeams.dart';
 import 'package:intl/intl.dart';
+import 'package:project_fan/nba_api.dart';
 
 import 'PlayersPage.dart';
 import 'home_page.dart';
@@ -76,168 +77,23 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
   var now = DateTime.now();
   var format = DateFormat('yMdd');
 
+
 //   Future <dynamic> playerLog;
 
 //  _TeamRosterPageState({this.nbaTeams});
 //TODO WHAT IS HAPPENING IN THIS CODE BELOW
 
-  Future<List<NbaGames>> getListOfGames() async {
-    var date = format.format(now);
-
-    final response = await http
-//        .get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
-    .get('https://data.nba.net/10s/prod/v2/20191215/scoreboard.json');
-
-    final Map<String, dynamic> gameListJson = jsonDecode(response.body);
-    List<NbaGames> nbaGames = [];
-    gameListJson['games']
-        .forEach((game) => nbaGames.add(NbaGames.fromJson(game)));
-    return nbaGames;
-  }
-
-  Future<List<PlayerDetails>> loadPlayerList() async {
-//    final response = await http.get('https://data.nba.net/10s/prod/v1/2019/teams/thunder/roster.json');
-    final response = await http
-        .get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
-//  PlayerDetails.fromJson(json.decode(response.body));
-    final Map<String, dynamic> playerListJson = jsonDecode(response.body);
-//    print(playerListJson);
-    List<PlayerDetails> players = [];
-    playerListJson['league']['standard']
-//    ['players']
-        .forEach((player) => players.add(PlayerDetails.fromJson(player)));
-    List<PlayerDetails> OKCPLAYERS = [];
-    OKCPLAYERS = players
-        .where((PlayerDetails player) => player.teamId == '1610612760')
-        .toList();
-//    return OKCPLAYERS;
-
-//  players.removeWhere((player) => !player.isActive);
-
-    return players;
-  }
-
-  getPlayerProfilePicture(String playerId) {
-    final String playerProfilePhoto =
-        ('https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/$playerId.png');
-    return playerProfilePhoto;
-  }
-
-  Future<List<NbaTeams>> loadNbaTeams() async {
-    final response =
-        await http.get('http://data.nba.net/data/10s/prod/v1/2019/teams.json');
-    if (response.statusCode == 200) {
-      final teamListJson = jsonDecode(response.body);
-      List<NbaTeams> nbaTeams = [];
-      teamListJson['league']['standard']
-          .forEach((team) => nbaTeams.add(NbaTeams.fromJson(team)));
-//    teamListJson['league']['standard'].forEach((team) => nbaTeams.add(value));
-      nbaTeams.removeWhere((team) => !team.isNBAFranchise);
-      return nbaTeams;
-    } else {
-      throw Exception('Failed to load');
-    }
-  }
-
-  playerGameLog(String playerId) async {
-    final response = await http.get(
-        'http://data.nba.net/data/10s/prod/v1/2019/players/${playerId}_gamelog.json');
-    if (response.statusCode == 200) {
-      final gameLogJson = jsonDecode(response.body);
-
-      List<PlayerGameLog> playerLog = [];
-      gameLogJson['leageue']['standard']
-          .forEach((gameLog) => playerLog.add(gameLog));
-//      print(playerLog);
-      return playerLog;
-    }
-  }
-
-  gameScoreBoard() async {
-    final response = await http
-        .get('https://data.nba.net/10s/prod/v2/20191202/scoreboard.json');
-    if (response.statusCode == 200) {
-      final testBody = jsonDecode(response.body);
-      List<Game> test = [];
-
-      testBody['games'].forEach((game) => test.add(Game.fromJson(game)));
-      return test;
-    } else {
-      print('error');
-      throw Exception('Failed to load');
-    }
-  }
-  Future<List<Stats>> getAllBoxScoreTest({String date, String gameId}) async {
-//    String gameId = nbaGame[0].gameId;
-//    https://data.nba.net/data/10s/prod/v1/20191205/0021900316_boxscore.json
-//    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
-  String url = 'https://data.nba.net/data/10s/prod/v1/20191215/${gameId}_boxscore.json';
-  List<String> urls = [];
-  List<Stats> WTF = [];
-  List<Stats> results = [];
-  var value = <Stats>[];
-
-  Future<http.Response> _fetchAndParse(String url) async {
-    return  http.get(url);
-  }
-  urls.add(url);
-  var resultss = await Future.wait(urls.map((url) => _fetchAndParse(url)));
-  for (var response in resultss) {
-//    var testBody = response.body;
-    print(response.statusCode);
-    value.add(Stats.fromJson(json.decode(response.body)['stats']));
-  }
-  return value;
-//  List<Future> resultListFutures = urls.forEach((url) async {
-//    return await _fetchAndParse(url).then((item) => WTF.add(item));
-//  });
-//  List<dynamic> resultsList = await Future.wait(resultListFutures);
-//  resultsList.forEach((item) => WTF.add(Stats.fromJson(item['stats'])));
-//  print(urls);
-//    return results;
-
-//    final response = await http.get(urls);
-//    print(url);
-//    if (response.statusCode == 200) {
-//      final testBody = jsonDecode(response.body);
-//      print(testBody['basicGameData']);
-//      testBody.forEach((game) => WTF.add(Stats.fromJson(game)));
-//      Stats okay = Stats.fromJson(testBody['stats']);
-
-//      print(WTF);
-//      return WTF;
-//    } else {
-//      throw Exception('Failed to load post');
-//    }
-  }
-
-  Future<Stats> getBoxScore({String date, String gameId}) async {
-//    String gameId = nbaGame[0].gameId;
-    https://data.nba.net/data/10s/prod/v1/20191205/0021900316_boxscore.json
-//    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
-    final response = await http.get(
-        'https://data.nba.net/data/10s/prod/v1/20191215/${gameId}_boxscore.json');
-    if (response.statusCode == 200) {
-      final testBody = jsonDecode(response.body);
-//      print(testBody['basicGameData']);
-//      List<Hello> WTF = [];
-//      testBody.forEach((game) => WTF.add(Hello.fromJson(game)));
-      Stats okay = Stats.fromJson(testBody['stats']);
-      return okay;
-    } else {
-      throw Exception('Failed to load post');
-    }
-  }
-
 
   @override
   void initState() {
+    var date = format.format(now);
+
     super.initState();
     selectedCategories = [];
     categories = Categories.getCat();
-    playerList = loadPlayerList();
-    nbaGames = getListOfGames();
-    nbaTeams = loadNbaTeams();
+    playerList = nbaApi.loadPlayerList();
+    nbaGames = nbaApi.getListOfGames();
+    nbaTeams = nbaApi.loadNbaTeams();
 //    gameBoxScore = getBoxScore();
 //     playerLog = getPlayerStats();
   }
@@ -245,8 +101,8 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
   @override
   Widget build(BuildContext context) {
     var now = DateTime.now();
-    var format = DateFormat('E, MMM dd');
-    var date = format.format(now);
+    var formatNormal = DateFormat('E, MMM dd');
+    var date = formatNormal.format(now);
 
     List<Widget> widgets = testCat
         .map((testCat) => Text(testCat,
@@ -331,12 +187,16 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                 playerList,
                 nbaTeams,
                 nbaGames,
-                gameBoxScore,
+//                gameBoxScore,
               ]),
               builder: (context, snapshot) {
+                var date = format.format(now);
+
                 List<PlayerDetails> playerDetails = snapshot.data[0];
                 List<NbaTeams> nbaTeam = snapshot.data[1];
                 List<NbaGames> nbaGames = snapshot.data[2];
+                List<PlayerStats> gameDayAllPlayers = [];
+
 //                Stats gameBoxScore = snapshot.data[3];
 //                List<PlayerStats> skodfkla = gameBoxScore.playerStats;
                 List<String> rosterPlayerIds = [
@@ -352,47 +212,50 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                 List<String> playerIDs = [];
                 List<PlayerStats> playersTeam = [];
                 if (!snapshot.hasData) {
-                  return Container();
+                  return Container(color: Colors.red,);
                 }
-               Iterable<Future> futures = nbaGames.map(((key) => getBoxScore(gameId: key.gameId)));
+               Iterable<Future> futures = nbaGames.map(((key) => nbaApi.getBoxScore(date: '20191216', gameId: key.gameId)));
+
                 return FutureBuilder(
                   future: Future.wait(futures),
+//                future: nbaApi.getBoxScore(gameId: nbaGames[3].gameId),
                   builder: (context, snapshot) {
-                    List<PlayerStats> gameDayAllPlayers = [];
-
-                    snapshot.data.forEach((stat) => gameDayAllPlayers.addAll(stat.playerStats));
-
-                    return ListView.builder(
-                        padding: EdgeInsets.all(0.0),
-                        itemCount: gameDayAllPlayers.length,
-                        itemBuilder: (BuildContext context, int index) {
-//
-                          playerIDs.add(playerDetails[index].personId);
-
-                          NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == gameDayAllPlayers[index].teamId);
-                          String playerPhoto = getPlayerProfilePicture(gameDayAllPlayers[index].personId);
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DetailsScreen(
-//                                      playerDetails: PlayerDetails[index],
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting: return Text('Loading....');
+                    default:
+//                      List<PlayerStats> yes = okay.playerStats;
+//                      gameDayAllPlayers.addAll(yes);
+                      snapshot.data.forEach((stat) => gameDayAllPlayers.addAll(stat.playerStats));
+                      return ListView.builder(
+                          padding: EdgeInsets.all(0.0),
+                          itemCount: gameDayAllPlayers.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            NbaTeams hello = nbaTeam.firstWhere((team) => team.teamId == gameDayAllPlayers[index].teamId);
+                            String playerPhoto = nbaApi.getPlayerProfilePicture(gameDayAllPlayers[index].personId);
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DetailsScreen(
+                                            playerDetails: gameDayAllPlayers[index],
 //                                      nbaTeam: hello.fullName,
 //                                      setPosition: setPosition[index],
-                                          playerPhoto: playerPhoto)));
-                            },
-                            child: PlayerGridTile(
-                              index: index,
+                                            playerPhoto: playerPhoto)));
+                              },
+                              child: PlayerGridTile(
+                                index: index,
 //                          position: setPosition[index],
-                              playerDetails: gameDayAllPlayers[index],
-                              playerPhoto: playerPhoto,
-                              triCode: hello.tricode ?? '',
-                              nbaTeam: nbaTeam,
-                              nbaGame: nbaGames,
-                            ),
-                          );
-                        });
+                                playerDetails: gameDayAllPlayers[index],
+                                playerPhoto: playerPhoto,
+                                triCode: hello.tricode ?? '',
+                                nbaTeam: nbaTeam,
+                                nbaGame: nbaGames,
+                              ),
+                            );
+                          });
+                    }
+
                   }
                 );
               },

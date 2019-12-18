@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:project_fan/nbaTeams.dart';
+import 'package:project_fan/nba_api.dart';
 import 'package:project_fan/test.dart';
 
 import 'home_page.dart';
@@ -42,24 +43,7 @@ json['lastName'],
 
 }
 
-Future<List<PlayerDetails>> loadPlayerList() async {
-  final response =
-      await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
-//  PlayerDetails.fromJson(json.decode(response.body));
-  final Map<String, dynamic> playerListJson = jsonDecode(response.body);
-  List<PlayerDetails> players = List<PlayerDetails>();
-  playerListJson['league']['standard']
-      .forEach((player) => players.add(PlayerDetails.fromJson(player)));
-//  players.removeWhere((player) => !player.isActive);
 
-  return players;
-}
-
-getPlayerProfilePicture(String playerId) {
-  final String playerProfilePhoto =
-      ('https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/$playerId.png');
-  return playerProfilePhoto;
-}
 
 class PlayersPage extends StatefulWidget {
   @override
@@ -299,7 +283,7 @@ class _PlayersPageState extends State<PlayersPage> {
                     SizedBox(
                       height: 500,
                       child: FutureBuilder<List<PlayerDetails>>(
-                        future: loadPlayerList(),
+                        future: nbaApi.loadPlayerList(),
                         builder: (context, snapshot) {
                           var jsonData = snapshot.data;
                           if (snapshot.hasData) {
@@ -307,21 +291,16 @@ class _PlayersPageState extends State<PlayersPage> {
                             return ListView.builder(
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, index) {
-                                  PlayerDetails playerDetails =
-                                      snapshot.data[index];
+                                  PlayerDetails playerDetails = snapshot.data[index];
                                   final String playerProfilePhoto =
-                                      getPlayerProfilePicture(
-                                          playerDetails.personId);
+                                      nbaApi.getPlayerProfilePicture(playerDetails.personId);
 
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                  return Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: <Widget>[
                                       Container(
                                           height: 100,
                                           width: 100,
-                                          child: Image.network(
-                                              playerProfilePhoto)),
+                                          child: Image.network(playerProfilePhoto)),
                                       Text(playerDetails.firstName),
                                       Text(playerDetails.lastName),
                                       Text(playerDetails.jerseyNumber),

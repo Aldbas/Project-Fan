@@ -195,10 +195,9 @@ class PlayerGridTile extends StatelessWidget {
                   children: <Widget>[
                     buildText('${playerDetails.fgm}/ ${playerDetails.fga}',
                         color: Colors.red), // FGM/A
-                    buildText('${playerDetails.fgp}%'), //FG%
-                    buildText(
-                        '${playerDetails.ftm}/${playerDetails.fta}'), //FTM/A
-                    buildText('${playerDetails.ftp}%'), //FT%
+                    buildText(playerDetails.fga == '0' ? '-/-': '.${playerDetails.fgp.replaceAll('.', '')}'), //FG%
+                    buildText('${playerDetails.ftm}/${playerDetails.fta}'), //FTM/A
+                    buildText(playerDetails.fta == '0' ? '-/-' : '.${playerDetails.ftp.replaceAll('.', '')}'), //FT%
                     buildText(playerDetails.tpm), //3PTM
                     buildText(playerDetails.points), //points
                     buildText(playerDetails.totReb), //total rebounds

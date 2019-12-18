@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_fan/PlayersPage.dart';
+import 'package:project_fan/model/playerGameLog.dart' as prefix0;
 import 'package:project_fan/nbaTeams.dart';
 import 'package:project_fan/player_gamelog.dart';
 import 'player_news_and_updates.dart';
@@ -9,7 +10,7 @@ import 'player_news_and_updates.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Position setPosition;
-  final PlayerDetails playerDetails;
+  final prefix0.PlayerStats playerDetails;
   final String nbaTeam;
   final String playerPhoto;
 
@@ -40,7 +41,7 @@ class DetailsScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 20.0, color: Colors.white),
                       ),
                       Text(
-                        '${playerDetails.pos} - $nbaTeam - ${playerDetails.jerseyNumber}',
+                        '${playerDetails.pos} - $nbaTeam - ${playerDetails.pos}',
                         style: TextStyle(color: Colors.white),
                       ),
                       Text(
