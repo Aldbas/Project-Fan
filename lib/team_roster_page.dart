@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:collection/collection.dart';
+import 'package:project_fan/UI/date_drop_button.dart';
 import 'package:project_fan/model/nba_games.dart';
 import 'package:project_fan/model/playerGameLog.dart';
 import 'package:project_fan/nbaTeams.dart';
@@ -97,10 +101,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                   background: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        '$date',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      DatePickerDropDown(),
                       Text(
                         'BEST LEAGUE',
                         style: TextStyle(color: Colors.white),
