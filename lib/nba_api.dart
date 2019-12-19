@@ -40,7 +40,7 @@ class NbaApi {
 
     final response = await http
 //        .get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
-        .get('https://data.nba.net/10s/prod/v2/20191216/scoreboard.json');
+        .get('https://data.nba.net/10s/prod/v2/20191218/scoreboard.json');
 
     final Map<String, dynamic> gameListJson = jsonDecode(response.body);
     List<NbaGames> nbaGames = [];
@@ -101,7 +101,7 @@ class NbaApi {
     }
   }
 
-  Future<Stats> getBoxScore({String date, String gameId}) async {
+  Future<Hello> getBoxScore({String date, String gameId}) async {
     final response = await http.get(
         'https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json');
     if (response.statusCode == 200) {
@@ -109,7 +109,7 @@ class NbaApi {
 //      print(testBody['basicGameData']);
 //      List<Hello> WTF = [];
 //      testBody.forEach((game) => WTF.add(Hello.fromJson(game)));
-      Stats okay = Stats.fromJson(testBody['stats']);
+      Hello okay = Hello.fromJson(testBody);
       return okay;
     } else {
 

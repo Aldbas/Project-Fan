@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project_fan/model/game_boxscore.dart';
+import 'package:project_fan/players_profile.dart';
 import 'package:project_fan/team_roster_page.dart';
 
 import 'PlayersPage.dart';
@@ -65,6 +66,7 @@ class PlayerGridTile extends StatelessWidget {
   final List<NbaTeams> nbaTeam;
   final List<NbaGames> nbaGame;
   final int index;
+  final Key key;
 
   PlayerGridTile(
       {this.playerDetails,
@@ -73,57 +75,15 @@ class PlayerGridTile extends StatelessWidget {
       this.playerPhoto,
       this.triCode,
       this.nbaTeam,
-      this.nbaGame});
-
-  getPlayerStats(String playerId) async {
-    final response = await http.get(
-        'https://data.nba.net/data/10s/prod/v1/2019/players/${playerId}_gamelog.json'); //1626162
-    if (response.statusCode == 200) {
-      final testBody = jsonDecode(response.body);
-      List<PlayerGameLog> hello = [];
-      testBody['league']['standard']
-          .forEach((gameLog) => hello.add(PlayerGameLog.fromJson(gameLog)));
-      return hello;
-    } else {
-      throw Exception('Failed to load');
-    }
-  }
-
-  Future<Stats> getBoxScore({String date, String gameId}) async {
-    String gameId = nbaGame[0].gameId;
-//    https://data.nba.net/data/10s/prod/v1/20191205/0021900316_boxscore.json
-//    https://data.nba.net/data/10s/prod/v1/$date/${gameId}_boxscore.json
-    final response = await http.get(
-        'https://data.nba.net/data/10s/prod/v1/20191204/0021900312_boxscore.json');
-    if (response.statusCode == 200) {
-      final testBody = jsonDecode(response.body);
-//      print(testBody['basicGameData']);
-//      List<Hello> WTF = [];
-//      testBody.forEach((game) => WTF.add(Hello.fromJson(game)));
-      Stats okay = Stats.fromJson(testBody['stats']);
-      return okay;
-    } else {
-      throw Exception('Failed to load post');
-    }
-  }
-
-  Future<List<NbaGames>> getListOfGames(String date) async {
-    final response = await http
-        .get('https://data.nba.net/10s/prod/v2/$date/scoreboard.json');
-    final Map<String, dynamic> gameListJson = jsonDecode(response.body);
-    List<NbaGames> nbaGames = [];
-    gameListJson['games']
-        .forEach((game) => nbaGames.add(NbaGames.fromJson(game)));
-    return nbaGames;
-  }
+      this.nbaGame,
+      this.key});
 
   @override
   Widget build(BuildContext context) {
-    //grab all active players
     var now = DateTime.now();
     var format = DateFormat('yMdd');
     var date = format.format(now);
-    if(playerDetails == null) return Container();
+    if (playerDetails == null) return Container();
     return
 //      FutureBuilder(
 //        future: getBoxScore(),
@@ -158,55 +118,72 @@ class PlayerGridTile extends StatelessWidget {
 //           NbaTeams game = nbaTeam.firstWhere((team) => team.teamId == (!homeGame? yes[0].hTeam.teamId : yes[0].vTeam.teamId));
 //           String game = nbaTeam[0].teamId == yes[0].vTeam.teamId? 'hello' : 'NOPE';
 //           print(playerDetails.playerId);
-        Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: Container(
-        color: Colors.white, //TODO:change card 'If already playing'
-        height: 70,
-        child: GridTile(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              CircleAvatar(
-                  child: Text('$index'),
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.transparent),
-              CircleAvatar(
-                radius: 32.0,
-                backgroundColor: Colors.transparent,
-                child: Image.network(playerPhoto),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
+        GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailsScreen(
+                    playerDetails: playerDetails,
+//                                      nbaTeam: hello.fullName,
+//                                      setPosition: setPosition[index],
+                    playerPhoto: playerPhoto)));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(1.0),
+        child: Container(
+          color: Colors.white, //TODO:change card 'If already playing'
+          height: 70,
+          child: GridTile(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                CircleAvatar(
+                    child: Text('${position.name}'),
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.transparent),
+                CircleAvatar(
+                  radius: 32.0,
+                  backgroundColor: Colors.transparent,
+                  child: Image.network(playerPhoto),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
 //                        playerDetails.playerId,
-                  '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
-                      ' $triCode - ${playerDetails.pos}\n',
+                    '${playerDetails.firstName[0]}. ${playerDetails.lastName}' +
+                        ' $triCode - ${playerDetails.pos}\n',
 //                                 '${!isGameActive? '$playerTeam - $oppTeam': '$winner $playerTeam - $oppTeam'} $where ${game.tricode}',
-                  style: TextStyle(fontSize: 12.0),
-                ),
-              )
-            ],
+                    style: TextStyle(fontSize: 12.0),
+                  ),
+                )
+              ],
+            ),
+            footer: playerDetails.dnp.isNotEmpty
+                ? Center(child: buildText(playerDetails.dnp))
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      buildText('${playerDetails.fgm}/ ${playerDetails.fga}',
+                          color: Colors.red), // FGM/A
+                      buildText(playerDetails.fga == '0'
+                          ? '-/-'
+                          : '.${playerDetails.fgp.replaceAll('.', '')}'), //FG%
+                      buildText(
+                          '${playerDetails.ftm}/${playerDetails.fta}'), //FTM/A
+                      buildText(playerDetails.fta == '0'
+                          ? '-/-'
+                          : '.${playerDetails.ftp.replaceAll('.', '')}'), //FT%
+                      buildText(playerDetails.tpm), //3PTM
+                      buildText(playerDetails.points), //points
+                      buildText(playerDetails.totReb), //total rebounds
+                      buildText(playerDetails.assists), //assists
+                      buildText(playerDetails.steals), //steals
+                      buildText(playerDetails.blocks),
+                      buildText(playerDetails.turnovers),
+                    ],
+                  ),
           ),
-          footer: playerDetails.dnp.isNotEmpty
-              ? Center(child: buildText(playerDetails.dnp))
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    buildText('${playerDetails.fgm}/ ${playerDetails.fga}',
-                        color: Colors.red), // FGM/A
-                    buildText(playerDetails.fga == '0' ? '-/-': '.${playerDetails.fgp.replaceAll('.', '')}'), //FG%
-                    buildText('${playerDetails.ftm}/${playerDetails.fta}'), //FTM/A
-                    buildText(playerDetails.fta == '0' ? '-/-' : '.${playerDetails.ftp.replaceAll('.', '')}'), //FT%
-                    buildText(playerDetails.tpm), //3PTM
-                    buildText(playerDetails.points), //points
-                    buildText(playerDetails.totReb), //total rebounds
-                    buildText(playerDetails.assists), //assists
-                    buildText(playerDetails.steals), //steals
-                    buildText(playerDetails.blocks),
-                    buildText(playerDetails.turnovers),
-                  ],
-                ),
         ),
       ),
     );

@@ -57,7 +57,10 @@ class MatchUpPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  CircleAvatar(child: Icon(Icons.access_alarm)),
+                  Draggable(
+                      childWhenDragging: Container(),
+                      feedback: CircleAvatar(child: Icon(Icons.access_alarm)),
+                      child: CircleAvatar(child: Icon(Icons.access_alarm))),
                   Text('4',textScaleFactor: 2.0,),
                   Column(children: <Widget>[
                     Text('HELLO'),

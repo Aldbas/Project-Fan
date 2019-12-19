@@ -1,13 +1,7 @@
-// To parse this JSON data, do
-//
-//     final hello = helloFromJson(jsonString);
 
 import 'dart:convert';
 
 import 'package:project_fan/model/playerGameLog.dart';
-
-Hello helloFromJson(String str) => Hello.fromJson(json.decode(str));
-
 
 class Hello {
   BasicGameData basicGameData;
@@ -28,6 +22,7 @@ class BasicGameData {
   String gameId;
   bool isGameActivated;
   String startTimeEastern;
+  int statusNum;
   GameTeamData vTeam;
   GameTeamData hTeam;
 
@@ -37,6 +32,7 @@ class BasicGameData {
     this.startTimeEastern,
     this.vTeam,
     this.hTeam,
+    this.statusNum
   });
 
   factory BasicGameData.fromJson(Map<String, dynamic> json) => BasicGameData(
@@ -45,6 +41,7 @@ class BasicGameData {
     startTimeEastern: json["startTimeEastern"],
     vTeam: GameTeamData.fromJson(json["vTeam"]),
     hTeam: GameTeamData.fromJson(json["hTeam"]),
+    statusNum: json['statusNum']
   );
 }
 
@@ -99,6 +96,7 @@ class Quarter {
 class Stats {
 
   List<PlayerStats> playerStats;
+
   Stats({this.playerStats});
 
   factory Stats.fromJson(Map<String, dynamic> json) => Stats(
