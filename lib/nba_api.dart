@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:project_fan/player_gamelog.dart';
@@ -6,6 +7,7 @@ import 'package:project_fan/player_gamelog.dart';
 import 'PlayersPage.dart';
 import 'model/game_boxscore.dart';
 import 'model/nba_games.dart';
+import 'model/playerInfo.dart';
 import 'model/today_game_scoreboard.dart';
 import 'nbaTeams.dart';
 
@@ -49,24 +51,14 @@ class NbaApi {
     return nbaGames;
   }
 
-  Future<List<PlayerDetails>> loadPlayerList() async {
-//    final response = await http.get('https://data.nba.net/10s/prod/v1/2019/teams/thunder/roster.json');
-    final response = await http
-        .get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
-//  PlayerDetails.fromJson(json.decode(response.body));
-    final Map<String, dynamic> playerListJson = jsonDecode(response.body);
-//    print(playerListJson);
-    List<PlayerDetails> players = [];
-    playerListJson['league']['standard']
-//    ['players']
-        .forEach((player) => players.add(PlayerDetails.fromJson(player)));
-    List<PlayerDetails> OKCPLAYERS = [];
-    OKCPLAYERS = players
-        .where((PlayerDetails player) => player.teamId == '1610612760')
-        .toList();
-//    return OKCPLAYERS;
 
-//  players.removeWhere((player) => !player.isActive);
+  Future<List<PlayerInfo>> loadPlayerList() async {
+    List<PlayerInfo> players = [];
+
+    final response = await http.get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
+    final Map<String, dynamic> playerListJson = jsonDecode(response.body);
+    playerListJson['league']['standard'].forEach((player) => players.add(PlayerInfo.fromJson(player)));
+    players.removeWhere((player) => !player.isActive);
 
     return players;
   }

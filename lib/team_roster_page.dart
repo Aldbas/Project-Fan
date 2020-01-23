@@ -1,6 +1,8 @@
+import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:project_fan/model/nba_games.dart';
 import 'package:project_fan/model/playerGameLog.dart';
+import 'package:project_fan/model/playerInfo.dart';
 import 'package:project_fan/nbaTeams.dart';
 import 'package:intl/intl.dart';
 import 'package:project_fan/nba_api.dart';
@@ -50,7 +52,7 @@ class TeamRosterPage extends StatefulWidget {
 
 class _TeamRosterPageState extends State<TeamRosterPage> {
   Future<List<NbaTeams>> nbaTeams;
-  Future<List<PlayerDetails>> playerList;
+  Future<List<PlayerInfo>> playerList;
   Future<List<NbaGames>> nbaGames;
   Future<Stats> gameBoxScore;
   List<Widget> _columns;
@@ -90,29 +92,38 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
             return <Widget>[
               SliverAppBar(
                 backgroundColor: bgColorBlue,
-                expandedHeight: 150,
+                expandedHeight: 130,
                 pinned: true,
+                actions: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.settings),
+                      color: Colors.white,
+                      onPressed: () => print('Team Settings'))
+                ],
+                title: Text('BEST LEAGUE'),
+                  centerTitle: true,
 //                  floating: false,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+//                  title: Text('HELLO'),
+                  centerTitle: true,
+
+
+                  background: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        '$date',
-                        style: TextStyle(color: Colors.white),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+//                          DatePicker(),
+                          MaterialButton(child: Text('Stats: Today',style: TextStyle(color: Colors.white)),
+                          onPressed: () => print('drop down options')) // dropdown
+                        ],
                       ),
-                      Text(
-                        'BEST LEAGUE',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      IconButton(
-                          icon: Icon(Icons.settings),
-                          color: Colors.white,
-                          onPressed: () => print('Team Settings'))
                     ],
                   ),
-                  centerTitle: true,
-                  title: Text('TEAM NAME'),
                 ),
               ),
               SliverPersistentHeader(
@@ -128,9 +139,9 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                       children: <Widget>[
                         Text(
                           'Players',
-                          style: TextStyle(color: Colors.white, fontSize: 15.0),
-                        ),
+                          style: TextStyle(color: Colors.white, fontSize: 15.0)),
                         Divider(),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: categories
@@ -202,7 +213,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                        bool gameStartCheck = snapshot.data.forEach((Hello game) {
                          if(game.basicGameData.statusNum > 1 ) {
 
-                           print('${game.basicGameData.gameId}');
+//                           print('${game.basicGameData.gameId}');
                          }
                        } );
 

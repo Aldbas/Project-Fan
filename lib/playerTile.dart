@@ -85,39 +85,6 @@ class PlayerGridTile extends StatelessWidget {
     var date = format.format(now);
     if (playerDetails == null) return Container();
     return
-//      FutureBuilder(
-//        future: getBoxScore(),
-//        builder: (context, snapshot) {
-//          Stats nbaGame = snapshot.data;
-//          List<PlayerStats> yup = nbaGame.playerStats;
-//          print('PLAYERDETAILS : ${yup.firstWhere(( you) => you.personId == playerDetails.playerId )}');
-//          PlayerStats stats = yup.firstWhere(( you) => you.personId == playerDetails.playerId );
-//          print(stats.personId);
-
-//          print();
-//          print(okay.basicGameData.isGameActivated);
-//          List<NbaGames> nbaGames = snapshot.data;
-//          print(nbaGames[0].gameId);
-//          print(snapshot.data);
-//          Hello okay = snapshot.data;
-//          PlayerStats stats = okay.stats.playerStats.firstWhere(
-//              (player) => player.personId == playerDetails.playerId);
-//          print(stats.lastName);
-
-//           Hello okay = snapshot.data;
-//           print(okay.basicGameData.gameId);
-//           List<PlayerGameLog> yes = snapshot.data;
-//           bool homeGame = yes[0].isHomeGame;
-//           bool isGameActive = true;
-//           Team hTeam = yes[0].hTeam;
-//           Team vTeam = yes[0].vTeam;
-//           String where = homeGame? 'v' : '@';
-//           int playerTeam = yes[0].vTeam.teamId  == playerDetails.teamId ? int.parse(vTeam.score) : int.parse(hTeam.score);
-//           int oppTeam = yes[0].hTeam.teamId != playerDetails.teamId ? int.parse(hTeam.score): int.parse(vTeam.score);
-//           String winner = playerTeam > oppTeam ? 'W' : 'L';
-//           NbaTeams game = nbaTeam.firstWhere((team) => team.teamId == (!homeGame? yes[0].hTeam.teamId : yes[0].vTeam.teamId));
-//           String game = nbaTeam[0].teamId == yes[0].vTeam.teamId? 'hello' : 'NOPE';
-//           print(playerDetails.playerId);
         GestureDetector(
       onTap: () {
         Navigator.push(

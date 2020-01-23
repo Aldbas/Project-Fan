@@ -1,23 +1,27 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:json_table/json_table.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
+import 'package:project_fan/model/playerGameLog.dart';
+import 'package:project_fan/model/playerInfo.dart';
 import 'package:project_fan/nbaTeams.dart';
 import 'package:project_fan/nba_api.dart';
 import 'package:project_fan/test.dart';
 
 import 'home_page.dart';
 
-class PlayerDetails extends Equatable{
-   final String firstName;
-   final String lastName;
-   final String personId;
-   final String teamId;
-   final String jerseyNumber;
-   final String pos;
+class PlayerDetails extends Equatable {
+  final String firstName;
+  final String lastName;
+  final String personId;
+  final String teamId;
+  final String jerseyNumber;
+  final String pos;
 
   PlayerDetails(
     this.firstName,
@@ -29,28 +33,41 @@ class PlayerDetails extends Equatable{
   );
 
   @override
-  List<Object> get props =>[personId,firstName,lastName,teamId,pos];
+  List<Object> get props => [personId, firstName, lastName, teamId, pos];
 
   factory PlayerDetails.fromJson(Map<String, dynamic> json) {
-    return PlayerDetails(json['firstName'],
-json['lastName'],
+    return PlayerDetails(
+      json['firstName'],
+      json['lastName'],
       json['personId'],
       json['teamId'],
-  json['jersey'],
- json['pos'],
+      json['jersey'],
+      json['pos'],
     );
   }
-
 }
 
-
-
 class PlayersPage extends StatefulWidget {
+  final Future<List<PlayerInfo>> playerList;
+
+  const PlayersPage({Key key, this.playerList}) : super(key: key);
   @override
   _PlayersPageState createState() => _PlayersPageState();
 }
-
 class _PlayersPageState extends State<PlayersPage> {
+  TextEditingController _searchQueryController;
+  List<PlayerInfo> _searchResults = [];
+  List<PlayerInfo> _initialData = [];
+
+  void initState() {
+    _searchQueryController = TextEditingController();
+    super.initState();
+  }
+  void dispose() {
+    _searchQueryController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +100,10 @@ class _PlayersPageState extends State<PlayersPage> {
                 width: 380,
                 child: Card(
                   //TODO create search function players by name(first || last names)
-                  child: TextFormField(
+                  child: TextField(
+                    onChanged: querySearch,
+                    keyboardType: TextInputType.text,
+                    controller: _searchQueryController,
                     maxLines: 1,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
@@ -91,90 +111,13 @@ class _PlayersPageState extends State<PlayersPage> {
                       prefixIcon: Icon(Icons.search),
                       hintText: 'Search by  player name',
                     ),
+//                    onChanged: onQuery(text: _searchQueryController.text),
                   ),
                 ),
               ),
               Card(
                 child: Column(
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('Top Available Players'),
-                          Text(' View All >')
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('All Positions'),
-                          Text('PG'),
-                          Text('SG'),
-                          Text('G'),
-                          Text('SF'),
-                        ]),
-                    Divider(),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('Proj Rank'),
-                          Text('Rank'),
-                          Text('Adds'),
-                          Text('%Own'),
-                        ]),
-                    Divider(),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      itemBuilder: (context, int) {
-                        return Container(
-                          height: 70,
-                          child: GridTile(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  CircleAvatar(
-                                      child: Icon(Icons.add_circle_outline),
-                                      foregroundColor: Colors.black,
-                                      backgroundColor: Colors.transparent),
-                                  CircleAvatar(
-                                    radius: 30.0,
-                                    backgroundColor: Colors.transparent,
-                                    child: Image.network(
-                                        'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/136.png'),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      'V. Carter' + // PLAYER NAME
-                                          ' Sac - SG\n' // PLAYER POSITION(S)
-                                              'W 105-102 @OKC', // GAME TODAY
-                                      style: TextStyle(fontSize: 12.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              footer: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Text('10'),
-                                      Text('68'),
-                                      Text('0'),
-                                      Text('60%'),
-                                    ],
-                                  ),
-                                ],
-                              )),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -182,15 +125,6 @@ class _PlayersPageState extends State<PlayersPage> {
                           Text('Transaction Trends'),
                           Text(' View All >')
                         ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('All Positions'),
-                          Text('PG'),
-                          Text('SG'),
-                          Text('G'),
-                          Text('SF'),
-                        ]),
                     Divider(),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -201,134 +135,9 @@ class _PlayersPageState extends State<PlayersPage> {
                           Text('%Own'),
                         ]),
                     Divider(),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      itemBuilder: (context, int) {
-                        return Container(
-                          height: 70,
-                          child: GridTile(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  CircleAvatar(
-                                      child: Icon(Icons.add_circle_outline),
-                                      foregroundColor: Colors.black,
-                                      backgroundColor: Colors.transparent),
-                                  CircleAvatar(
-                                    radius: 30.0,
-                                    backgroundColor: Colors.transparent,
-                                    child: Image.network(
-                                        'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3149673.png'),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      'V. Carter' + //TODO PLAYER NAME
-                                          ' Sac - SG\n' //TODO PLAYER POSITION(S)
-                                              'W 105-102 @OKC', //TODO GAME TODAY
-                                      style: TextStyle(fontSize: 12.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              footer: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Text('10'),
-                                      Text('68'),
-                                      Text('0'),
-                                      Text('60%'),
-                                    ],
-                                  ),
-                                ],
-                              )),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('Transaction Trends'),
-                          Text(' View All >')
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('All Positions'),
-                          Text('PG'),
-                          Text('SG'),
-                          Text('G'),
-                          Text('SF'),
-                        ]),
-                    Divider(),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text('Proj Rank'),
-                          Text('Rank'),
-                          Text('Adds'),
-                          Text('%Own'),
-                        ]),
-                    Divider(),
-                    SizedBox(
-                      height: 500,
-                      child: FutureBuilder<List<PlayerDetails>>(
-                        future: nbaApi.loadPlayerList(),
-                        builder: (context, snapshot) {
-                          var jsonData = snapshot.data;
-                          if (snapshot.hasData) {
-//                            print(jsonData.length);
-                            return ListView.builder(
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  PlayerDetails playerDetails = snapshot.data[index];
-                                  final String playerProfilePhoto =
-                                      nbaApi.getPlayerProfilePicture(playerDetails.personId);
-
-                                  return Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Container(
-                                          height: 100,
-                                          width: 100,
-                                          child: Image.network(playerProfilePhoto)),
-                                      Text(playerDetails.firstName),
-                                      Text(playerDetails.lastName),
-                                      Text(playerDetails.jerseyNumber),
-                                      Text(playerDetails.pos),
-                                      Text(playerDetails.personId),
-//                                    Text('teamId: ${playerDetails.teamId}'),
-                                    ],
-                                  );
-                                });
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return Container();
-
-//                        return ListView.builder(
-//                            itemCount: 2,
-//                            itemBuilder:(BuildContext context, int index) {
-//                          return Card(
-//                            child: Column(children: <Widget>[
-//                              Text('NAME: ' + jsonData.),
-//                              Text('URL: ' + jsonData[index]["origin"])
-//                            ],
-//                            ),
-//                          );
-//                        });
-                        },
-                      ),
-                    ),
+                    SizedBox(height: 300, child: _buildAllPlayersListView()),
+                    Divider(thickness: 20.0, height: 20.0),
+                    Container(height: 500, child: _buildTeamRosterListView()),
                   ],
                 ),
               ),
@@ -337,12 +146,150 @@ class _PlayersPageState extends State<PlayersPage> {
         ));
   }
 
-  List<Players> parseJson(String response) {
-    if (response == null) {
-      return [];
+  Widget _buildAllPlayersListView() {
+    return ValueListenableBuilder(
+      valueListenable: Hive.box('Players').listenable(),
+      builder: (BuildContext context, Box allPlayersBox, Widget widgets) {
+        return FutureBuilder<List<PlayerInfo>>(
+          future: widget.playerList,
+          builder: (context, snapshot) {
+            _initialData = snapshot.data;
+            if (snapshot.hasData) {
+              return _searchResults.length != 0 || _searchQueryController.text.isNotEmpty ?
+              ListView.builder(
+                  itemCount: _searchResults.length,
+                  itemBuilder: (BuildContext context, int index) {
+                  PlayerInfo playerInfo = _searchResults[index];
+                  final String playerProfilePhoto = nbaApi.getPlayerProfilePicture(playerInfo.personId);
+                  if (allPlayersBox.values.contains(playerInfo)) return Container(); // remove player if already in Team
+
+                  return Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(
+                          icon: CircleAvatar(
+                              child: Icon(Icons.add_circle_outline),
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.transparent),
+                          onPressed: () => addPlayer(playerInfo)),
+                      Container(
+                          height: 80,
+                          width: 80,
+                          child: Image.network(playerProfilePhoto)),
+                      Text(playerInfo.firstName),
+                      Text(playerInfo.lastName),
+                      Text(playerInfo.jersey),
+                      Text(playerInfo.pos),
+                      Text(playerInfo.personId)
+//                                    Text('teamId: ${playerDetails.teamId}'),
+                    ]);
+              }) : ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    PlayerInfo playerInfo = _initialData[index];
+                    final String playerProfilePhoto = nbaApi.getPlayerProfilePicture(playerInfo.personId);
+                    if (allPlayersBox.values.contains(playerInfo)) return Container(); // remove player if already in Team
+                    return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          IconButton(
+                              icon: CircleAvatar(
+                                  child: Icon(Icons.add_circle_outline),
+                                  foregroundColor: Colors.black,
+                                  backgroundColor: Colors.transparent),
+                              onPressed: () => addPlayer(playerInfo)),
+                          Container(
+                              height: 80,
+                              width: 80,
+                              child: Image.network(playerProfilePhoto)),
+                          Text(playerInfo.firstName),
+                          Text(playerInfo.lastName),
+                          Text(playerInfo.jersey),
+                          Text(playerInfo.pos),
+                          Text(playerInfo.personId)
+//                                    Text('teamId: ${playerDetails.teamId}'),
+                        ]);
+                  });
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
+            return Container(child: Text('NO DATA'));
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildTeamRosterListView() {
+    return ValueListenableBuilder(
+      valueListenable: Hive.box('Players').listenable(),
+      builder: (BuildContext context, Box playersBox, Widget widget) {
+        if (playersBox.values.isEmpty) {
+          return Center(child: Text('NOTHING'));
+        }
+        return ListView.builder(
+            itemCount: playersBox.length,
+            itemBuilder: (BuildContext context, int index) {
+              PlayerInfo player = playersBox.getAt(index);
+//              final player = playersBox.get(index) as PlayerInfo;
+              final String playerProfilePhoto =
+                  nbaApi.getPlayerProfilePicture(player.personId);
+              return ListTile(
+                leading: Image.network(playerProfilePhoto),
+                title: MaterialButton(
+                    child: Text(player.firstName),
+                    onPressed: () => playersBox.deleteAt(index)),
+                subtitle: Text(player.personId),
+              );
+            });
+      },
+    );
+  }
+
+  Future<List<PlayerInfo>> loadPlayersList() async {
+//    final response = await http.get('https://data.nba.net/10s/prod/v1/2019/teams/thunder/roster.json');
+    final response = await http
+        .get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
+//  PlayerDetails.fromJson(json.decode(response.body));
+    final Map<String, dynamic> playerListJson = jsonDecode(response.body);
+//    print(playerListJson);
+    List<PlayerInfo> players = [];
+    playerListJson['league']['standard']
+//    ['players']
+        .forEach((player) => players.add(PlayerInfo.fromJson(player)));
+
+//  players.removeWhere((player) => !player.isActive);
+
+    return players;
+  }
+
+  void addPlayer(PlayerInfo playerInfo) {
+    final playersBox = Hive.box('Players');
+    if (playersBox.values.contains(playerInfo)) {
+      print('Already saved');
+      return null;
+    } else {
+      print('adding');
+      playersBox.add(playerInfo);
     }
-    final parsed =
-        json.decode(response.toString()).cast<Map<String, dynamic>>();
-    return parsed.map<Players>((json) => Players.fromJson(json)).toList();
+  }
+
+  Future<void> deleteBoxKey(PlayerInfo playerInfo) async {
+    final playersBox = Hive.box('Players');
+    playersBox.delete(playerInfo);
+    print('player deleted');
+  }
+
+  querySearch(String string)  {
+    _searchResults.clear();
+      setState(() {
+        _searchResults = _initialData.where((player) =>  player.firstName.toLowerCase().contains(string.toLowerCase()) || player.lastName.toLowerCase().contains(string.toLowerCase())).toList();
+        });
+  }
+
+  void addTest(PlayerInfo playerInfo) {
+    _searchResults.add(playerInfo);
+    print('add to serach');
+    print(_searchResults.length);
   }
 }
+
