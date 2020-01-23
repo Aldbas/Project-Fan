@@ -87,8 +87,7 @@ class _PlayersPageState extends State<PlayersPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     IconButton(
-                        icon:
-                            Icon(Icons.star)), //TODO starred players watchlist
+                        icon: Icon(Icons.star)), //TODO starred players watchlist
                     Icon(Icons.people), // TODO compare player stats
                     Icon(Icons.receipt), // TODO NBA team/player news
                     Icon(Icons.blur_linear) // TODO Fantasy news
@@ -99,7 +98,6 @@ class _PlayersPageState extends State<PlayersPage> {
                 height: 50,
                 width: 380,
                 child: Card(
-                  //TODO create search function players by name(first || last names)
                   child: TextField(
                     onChanged: querySearch,
                     keyboardType: TextInputType.text,
@@ -171,9 +169,7 @@ class _PlayersPageState extends State<PlayersPage> {
                               foregroundColor: Colors.black,
                               backgroundColor: Colors.transparent),
                           onPressed: () => addPlayer(playerInfo)),
-                      Container(
-                          height: 80,
-                          width: 80,
+                      Container(height: 80, width: 80,
                           child: Image.network(playerProfilePhoto)),
                       Text(playerInfo.firstName),
                       Text(playerInfo.lastName),
@@ -205,8 +201,7 @@ class _PlayersPageState extends State<PlayersPage> {
                           Text(playerInfo.lastName),
                           Text(playerInfo.jersey),
                           Text(playerInfo.pos),
-                          Text(playerInfo.personId)
-//                                    Text('teamId: ${playerDetails.teamId}'),
+                          Text(playerInfo.personId),
                         ]);
                   });
             } else if (snapshot.hasError) {
@@ -245,31 +240,14 @@ class _PlayersPageState extends State<PlayersPage> {
     );
   }
 
-  Future<List<PlayerInfo>> loadPlayersList() async {
-//    final response = await http.get('https://data.nba.net/10s/prod/v1/2019/teams/thunder/roster.json');
-    final response = await http
-        .get('http://data.nba.net/data/10s/prod/v1/2019/players.json');
-//  PlayerDetails.fromJson(json.decode(response.body));
-    final Map<String, dynamic> playerListJson = jsonDecode(response.body);
-//    print(playerListJson);
-    List<PlayerInfo> players = [];
-    playerListJson['league']['standard']
-//    ['players']
-        .forEach((player) => players.add(PlayerInfo.fromJson(player)));
-
-//  players.removeWhere((player) => !player.isActive);
-
-    return players;
-  }
-
   void addPlayer(PlayerInfo playerInfo) {
     final playersBox = Hive.box('Players');
     if (playersBox.values.contains(playerInfo)) {
-      print('Already saved');
-      return null;
-    } else {
-      print('adding');
-      playersBox.add(playerInfo);
+        print('Already saved');
+        return null;
+      } else {
+        print('adding');
+        playersBox.add(playerInfo);
     }
   }
 
@@ -284,12 +262,6 @@ class _PlayersPageState extends State<PlayersPage> {
       setState(() {
         _searchResults = _initialData.where((player) =>  player.firstName.toLowerCase().contains(string.toLowerCase()) || player.lastName.toLowerCase().contains(string.toLowerCase())).toList();
         });
-  }
-
-  void addTest(PlayerInfo playerInfo) {
-    _searchResults.add(playerInfo);
-    print('add to serach');
-    print(_searchResults.length);
   }
 }
 
