@@ -94,9 +94,7 @@ class Quarter {
 
 
 class Stats {
-
   List<PlayerStats> playerStats;
-
   Stats({this.playerStats});
 
   factory Stats.fromJson(Map<String, dynamic> json) => Stats(

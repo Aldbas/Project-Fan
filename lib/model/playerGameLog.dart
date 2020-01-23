@@ -1,4 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
+
+part 'playerGameLog.g.dart';
 
 class PlayerGameLog {
   String gameId;
@@ -25,7 +28,6 @@ class PlayerGameLog {
     vTeam: Team.fromJson(json['vTeam']),
     playerStats: PlayerStats.fromJson(json['stats']),
   );
-
 }
 
 class Team {
@@ -43,17 +45,23 @@ class Team {
     isWinner: json['isWinner']
   );
 }
-
+@HiveType(typeId: 2)
 class PlayerStats extends Equatable{
+  @HiveField(0)
   final String personId;
+  @HiveField(1)
   final String firstName;
+  @HiveField(2)
   final String lastName;
+  @HiveField(3)
   final String jersey;
+  @HiveField(4)
   final String teamId;
   final bool isOnCourt;
   final String points;
   final String pos;
   final String positionFull;
+  @HiveField(5)
   final String playerCode;
   final String min;
   final String fgm;
@@ -76,7 +84,7 @@ class PlayerStats extends Equatable{
   final String plusMinus;
   final String dnp;
 
-  PlayerStats (
+  PlayerStats ({
     this.personId,
     this.firstName,
     this.lastName,
@@ -107,40 +115,40 @@ class PlayerStats extends Equatable{
     this.blocks,
     this.plusMinus,
     this.dnp
-);
+  });
   @override
   List<Object> get props =>[personId,firstName,lastName,teamId];
 
   factory PlayerStats.fromJson(Map<String, dynamic> json) => PlayerStats(
-     json["personId"],
-     json["firstName"],
-     json["lastName"],
-     json["jersey"],
-     json["teamId"],
-     json["isOnCourt"],
-     json["points"],
-     json["pos"],
-     json["position_full"],
-     json["player_code"],
-     json["min"],
-     json["fgm"],
-     json["fga"],
-     json["fgp"],
-     json["ftm"],
-     json["fta"],
-     json["ftp"],
-     json["tpm"],
-     json["tpa"],
-     json["tpp"],
-     json["offReb"],
-     json["defReb"],
-     json["totReb"],
-     json["assists"],
-     json["pFouls"],
-     json["steals"],
-     json["turnovers"],
-     json["blocks"],
-     json["plusMinus"],
-     json["dnp"]
+     personId: json["personId"],
+     firstName: json["firstName"],
+     lastName: json["lastName"],
+     jersey: json["jersey"],
+     teamId: json["teamId"],
+     isOnCourt: json["isOnCourt"],
+     points: json["points"],
+     pos: json["pos"],
+     positionFull: json["position_full"],
+     playerCode: json["player_code"],
+     min: json["min"],
+     fgm: json["fgm"],
+     fga: json["fga"],
+     fgp: json["fgp"],
+     ftm: json["ftm"],
+     fta: json["fta"],
+     ftp: json["ftp"],
+     tpm: json["tpm"],
+     tpa: json["tpa"],
+     tpp: json["tpp"],
+     offReb: json["offReb"],
+     defReb: json["defReb"],
+     totReb: json["totReb"],
+     assists: json["assists"],
+     pFouls: json["pFouls"],
+     steals: json["steals"],
+     turnovers: json["turnovers"],
+     blocks: json["blocks"],
+     plusMinus: json["plusMinus"],
+     dnp: json["dnp"]
   );
 }

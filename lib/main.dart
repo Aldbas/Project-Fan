@@ -1,14 +1,20 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:project_fan/home_page.dart';
 
-import 'Standings.dart';
-import 'playerTile.dart';
-import 'players_profile.dart';
+import 'model/playerInfo.dart';
 import 'team_roster_page.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
+  Hive.registerAdapter(PlayerInfoAdapter());
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -22,11 +28,26 @@ class _MyAppState extends State<MyApp> {
       color: Colors.orange,
       debugShowCheckedModeBanner: false,
       title: 'Project Fan',
-      home: HomePage(),
+      home: FutureBuilder(
+          future: Future.wait([Hive.openBox('Players'), Hive.openBox('AllPlayers')]),
+          builder: (context,snapshot) {
+            if(snapshot.connectionState == ConnectionState.done) {
+              if(snapshot.hasError)
+                return Text(snapshot.hasError.toString());
+              else return HomePage();
+            }
+            else return Scaffold();
+      }),
       routes: {
         'HomePage': (context) => HomePage(),
         'TeamRosterPage': (context) => TeamRosterPage(),
       },
     );
+  }
+
+  @override
+  void dispose() {
+    Hive.close();
+    super.dispose();
   }
 }
