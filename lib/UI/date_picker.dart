@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
-import 'package:project_fan/UI/date_drop_button.dart';
 
 class DatePicker extends StatefulWidget {
 
@@ -30,7 +29,7 @@ Widget build(BuildContext context) {
               minWidth: 1.0,
               child: Text(date,
                   style: TextStyle(color:date == formatNormal.format(DateTime.now())? Colors.amber : Colors.white,)),
-            onPressed: () => DateSelector(now)),
+            onPressed: null),
           IconButton(icon: Icon(Icons.arrow_forward_ios, color: Colors.white),
           onPressed: () => addDate())
         ],

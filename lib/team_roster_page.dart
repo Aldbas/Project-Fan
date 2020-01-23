@@ -1,5 +1,5 @@
-import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:project_fan/UI/date_picker.dart';
 import 'package:project_fan/model/nba_games.dart';
 import 'package:project_fan/model/playerGameLog.dart';
 import 'package:project_fan/model/playerInfo.dart';
@@ -117,7 +117,7 @@ class _TeamRosterPageState extends State<TeamRosterPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-//                          DatePicker(),
+                          DatePicker(),
                           MaterialButton(child: Text('Stats: Today',style: TextStyle(color: Colors.white)),
                           onPressed: () => print('drop down options')) // dropdown
                         ],
